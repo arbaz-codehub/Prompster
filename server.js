@@ -27,11 +27,6 @@ app.set('views', path.join(__dirname, 'views'));
 // Static Files (Serve files from current directory for now to keep existing structure working)
 app.use(express.static(path.join(__dirname, '/')));
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/prompster')
-  .then(() => console.log('MongoDB Connected Locally'))
-  .catch(err => console.log(err));
-
 // Routes
 app.use('/api', require('./routes/api'));
 app.use('/admin', require('./routes/admin'));
@@ -41,7 +36,19 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'prompster.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Database Connection and Server Start
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/prompster', {
+  serverSelectionTimeoutMS: 5000 // Timeout early if can't connect
+})
+  .then(() => {
+    console.log('MongoDB Connected Successfully');
+    // Start Server only AFTER db connects
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('CRITICAL: Failed to connect to MongoDB. Server is resting.');
+    console.error(err);
+    process.exit(1); // Force exit so Render marks the deployment as failed
+  });
