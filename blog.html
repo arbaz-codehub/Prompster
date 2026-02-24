@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Prompster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup - Consistent with other pages */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Shiny CTA CSS */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; }
+
+        /* Blog Card Styles */
+        .blog-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .blog-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .blog-card:hover .card-shimmer { opacity: 1; transform: translateX(100%); transition: transform 0.8s; }
+        .blog-card:hover .blog-image { transform: scale(1.05); }
+        
+        .card-shimmer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); transform: translateX(-100%); pointer-events: none; opacity: 0; }
+
+        .text-gradient {
+            background: linear-gradient(to right, #60a5fa, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoMXYtMUgwem00MCA1aDF2LTFINDUweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="prompster.html" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-white font-medium transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs"><span>Sign In</span></button>
+                </div>
+                 <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+            <div class="pt-4">
+                 <div class="inline-block bg-transparent scale-90 origin-left">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-20 container mx-auto px-6 max-w-7xl relative min-h-screen flex flex-col">
+
+        <!-- Featured Post Hero -->
+        <div id="featured-post" class="mb-20 relative rounded-3xl overflow-hidden border border-white/10 group cursor-pointer" onclick="">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10 transition-opacity duration-500 hover:opacity-90"></div>
+            <div id="featured-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
+            
+            <div class="relative z-20 p-8 md:p-12 lg:p-16 flex flex-col justify-end h-[500px] md:h-[600px] max-w-4xl">
+                 <div class="flex items-center gap-3 mb-4">
+                    <span class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-medium rounded-full backdrop-blur-sm">Featured</span>
+                    <span id="featured-date" class="text-sm text-gray-300"></span>
+                    <span class="text-sm text-gray-400">•</span>
+                    <span id="featured-author" class="text-sm text-gray-300"></span>
+                 </div>
+                 <h1 id="featured-title" class="text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-6 leading-tight"></h1>
+                 <p id="featured-desc" class="text-lg text-gray-300 mb-8 line-clamp-2 max-w-2xl"></p>
+                 <div class="flex items-center gap-2 text-blue-400 group-hover:text-blue-300 transition-colors font-medium">
+                     <span>Read Full Article</span>
+                     <span class="iconify group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right"></span>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Horizontal Section -->
+        <div class="mb-20 rounded-2xl bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-white/10 p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+            <div class="max-w-xl">
+                 <h3 class="text-2xl font-medium text-white mb-2">Join the Inner Circle</h3>
+                 <p class="text-gray-400">Get weekly curated prompts, engineering tips, and market insights delivered to your inbox.</p>
+            </div>
+            <div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
+                 <input type="email" placeholder="Enter your email" class="w-full md:w-80 bg-black/50 border border-white/10 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500/50 transition-colors placeholder-gray-500">
+                 <button class="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-medium transition-colors">Subscribe</button>
+            </div>
+        </div>
+
+        <!-- Latest Articles Header -->
+        <div class="flex justify-between items-end mb-10">
+            <div>
+                 <h2 class="text-3xl font-medium text-white mb-2">Latest Insights</h2>
+                 <p class="text-gray-500">Deep dives into AI, design, and creativity.</p>
+            </div>
+             <div class="hidden md:flex gap-2">
+                 <button class="category-btn px-4 py-2 rounded-full border border-white/10 bg-white/10 text-white text-sm hover:bg-white/10 transition-colors">All</button>
+                 <button class="category-btn px-4 py-2 rounded-full border border-white/10 bg-transparent text-gray-400 text-sm hover:text-white hover:bg-white/5 transition-colors">Tutorials</button>
+                 <button class="category-btn px-4 py-2 rounded-full border border-white/10 bg-transparent text-gray-400 text-sm hover:text-white hover:bg-white/5 transition-colors">AI News</button>
+                 <button class="category-btn px-4 py-2 rounded-full border border-white/10 bg-transparent text-gray-400 text-sm hover:text-white hover:bg-white/5 transition-colors">Tips</button>
+             </div>
+        </div>
+
+        <!-- Blog Grid -->
+        <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-controls" class="flex justify-center items-center gap-4">
+            <!-- Dynamic Pagination Logic -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-16 pb-8 border-t border-white/10 bg-black w-full">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <div class="col-span-2 md:col-span-1">
+                     <a href="prompster.html" class="flex items-center gap-2 mb-4">
+                        <img src="logo.png" alt="Prompster" class="h-8 w-auto object-contain rounded-[50%]">
+                    </a>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        Empowering creators with the language of the future. <br>Based in San Francisco &amp; Bangalore.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Marketplace</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Trending</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Bundles</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Prompt Guide</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Become a Seller</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-600">
+                <p>© 2024 Prompster Inc. All rights reserved.</p>
+                <div class="flex items-center gap-4 mt-4 md:mt-0">
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:twitter" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:github" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Navigation Logic
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('.iconify');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.setAttribute('data-icon', 'lucide:x');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-icon', 'lucide:menu');
+            }
+        });
+
+        // Pagination and Filtering Logic
+        const itemsPerPage = 6;
+        let currentPage = 1;
+        let currentCategory = 'All';
+        
+        const gridContainer = document.getElementById('blog-grid');
+        const paginationContainer = document.getElementById('pagination-controls');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+
+        function renderFeaturedPost() {
+             const featured = blogData[0]; // Select first post as featured
+             if (!featured) return;
+
+             const bgEl = document.getElementById('featured-bg');
+             if(bgEl) bgEl.style.backgroundImage = `url('${featured.image}')`;
+             
+             document.getElementById('featured-date').textContent = featured.date;
+             document.getElementById('featured-author').textContent = `By ${featured.author}`;
+             document.getElementById('featured-title').textContent = featured.title;
+             document.getElementById('featured-desc').textContent = featured.summary;
+             document.getElementById('featured-post').onclick = () => window.location.href = `blog-details.html?id=${featured._id}`;
+        }
+
+        function renderBlog() {
+            gridContainer.innerHTML = '';
+            
+            // Filter
+            const filteredPosts = currentCategory === 'All' 
+                ? blogData 
+                : blogData.filter(post => post.category === currentCategory);
+            
+            // Paginate
+            const totalPages = Math.ceil(filteredPosts.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+            
+            // Render Posts
+            paginatedPosts.forEach(post => {
+                const card = document.createElement('article');
+                card.className = 'blog-card group cursor-pointer rounded-2xl bg-[#080808] border border-white/5 overflow-hidden flex flex-col h-full';
+                card.onclick = () => window.location.href = `blog-details.html?id=${post._id}`;
+                
+                card.innerHTML = `
+                    <div class="card-shimmer"></div>
+                    <div class="aspect-[16/9] overflow-hidden relative">
+                         <div class="absolute inset-0 bg-blue-900/10 z-10 transition-opacity group-hover:opacity-0"></div>
+                         <img src="${post.image}" 
+                              class="blog-image w-full h-full object-cover transition-transform duration-700" 
+                              alt="${post.title}">
+                        <div class="absolute top-4 right-4 z-20">
+                            <span class="px-2 py-1 bg-black/60 backdrop-blur-md text-[10px] uppercase tracking-wider text-white rounded border border-white/10">${post.category}</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-1">
+                         <div class="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                             <span>${post.date}</span>
+                             <span>•</span>
+                             <span>5 min read</span>
+                         </div>
+                         <h3 class="text-xl font-medium text-white mb-3 group-hover:text-blue-400 transition-colors line-clamp-2">${post.title}</h3>
+                         <p class="text-gray-400 text-sm line-clamp-3 mb-6 flex-1">${post.summary}</p>
+                         
+                         <div class="flex items-center justify-between border-t border-white/5 pt-4 mt-auto">
+                             <div class="flex items-center gap-2">
+                                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${post.author}" class="w-6 h-6 rounded-full bg-gray-700" alt="Author">
+                                 <span class="text-xs text-gray-400">${post.author}</span>
+                             </div>
+                             <span class="text-xs font-medium text-blue-500 group-hover:translate-x-1 transition-transform">Read More &rarr;</span>
+                         </div>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            // Render Pagination
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            paginationContainer.innerHTML = '';
+            
+            if(totalPages <= 1) return;
+
+            // Prev Button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `px-4 py-2 rounded-full border border-white/10 ${currentPage === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-white/5'} transition-colors`;
+            prevBtn.innerHTML = '&larr; Previous';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if(currentPage > 1) {
+                    currentPage--;
+                    renderBlog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(prevBtn);
+
+            // Page Numbers
+            for(let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-sm transition-colors ${i === currentPage ? 'bg-blue-600 text-white border-blue-500' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`;
+                pageBtn.innerText = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    renderBlog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Next Button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `px-4 py-2 rounded-full border border-white/10 ${currentPage === totalPages ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 hover:text-white hover:bg-white/5'} transition-colors`;
+            nextBtn.innerHTML = 'Next &rarr;';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if(currentPage < totalPages) {
+                    currentPage++;
+                    renderBlog();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        // Category Filter Events
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update Active State
+                categoryButtons.forEach(b => {
+                    b.classList.remove('bg-white/10', 'text-white');
+                    b.classList.add('bg-transparent', 'text-gray-400');
+                });
+                btn.classList.remove('bg-transparent', 'text-gray-400');
+                btn.classList.add('bg-white/10', 'text-white');
+
+                // Update Filter
+                currentCategory = btn.innerText;
+                currentPage = 1; // Reset to page 1
+                renderBlog();
+            });
+        });
+
+        // Initialize
+        document.addEventListener('PrompsterDataLoaded', () => {
+            renderFeaturedPost();
+            renderBlog();
+        });
+    </script>
+    <script src="js/auth-modal.js"></script>
+</body>
+</html>

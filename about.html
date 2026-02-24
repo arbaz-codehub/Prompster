@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Prompster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to bottom right, #ffffff, #94a3b8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-accent {
+            background: linear-gradient(to right, #60a5fa, #a855f7);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        
+       /* Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+
+        /* Shiny CTA CSS */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; }
+
+        .team-card {
+            transition: transform 0.3s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-10px);
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoMXYtMUgwem00MCA1aDF2LTFINDUweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="prompster.html" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-white font-medium transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs"><span>Sign In</span></button>
+                </div>
+                 <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+            <div class="pt-4">
+                 <div class="inline-block bg-transparent scale-90 origin-left">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative">
+        
+        <!-- Hero Section -->
+        <section class="pt-40 pb-20 relative overflow-hidden">
+            <div class="container mx-auto px-6 max-w-7xl relative z-10">
+                <div class="max-w-4xl mx-auto text-center reveal-up">
+                    <span id="hero-tagline" class="text-blue-400 font-medium tracking-wide uppercase text-sm mb-4 block">Our Story</span>
+                    <h1 id="hero-title" class="text-5xl md:text-7xl font-medium text-white mb-6 leading-tight">
+                        We are building the <br>
+                        <span class="text-gradient-accent">language of tomorrow.</span>
+                    </h1>
+                    <p id="hero-desc" class="text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto">
+                        Prompster is the world's first editorial marketplace for synthetic intelligence. We bridge the gap between human creativity and machine capability.
+                    </p>
+                </div>
+            </div>
+             <!-- Decorative gradients -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="py-20 bg-white/[0.02] border-y border-white/5">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div class="reveal-up">
+                        <img id="mission-image" src="" class="rounded-2xl border border-white/10 shadow-2xl" alt="Our Mission">
+                    </div>
+                    <div class="reveal-up delay-100">
+                        <h2 id="mission-title" class="text-3xl font-medium text-white mb-6">Our Mission</h2>
+                        <p id="mission-desc1" class="text-gray-400 leading-relaxed mb-6"></p>
+                        <p id="mission-desc2" class="text-gray-400 leading-relaxed mb-8"></p>
+                        
+                        <div id="mission-stats" class="grid grid-cols-2 gap-8">
+                            <!-- JS Rendered -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="py-24">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-16 reveal-up">
+                    <h2 class="text-3xl font-medium text-white mb-4">Why Choose Prompster?</h2>
+                    <p class="text-gray-400">The premier destination for professional-grade AI assets.</p>
+                </div>
+                
+                <div id="why-choose-grid" class="grid md:grid-cols-3 gap-8">
+                    <!-- JS Rendered -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="py-20 border-t border-white/5 bg-white/[0.02]">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-16 reveal-up">
+                    <h2 class="text-3xl font-medium text-white mb-4">Meet the Team</h2>
+                    <p class="text-gray-400">The minds behind the machine.</p>
+                </div>
+
+                <div id="team-grid" class="grid md:grid-cols-4 gap-8">
+                    <!-- JS Rendered -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-16 pb-8 border-t border-white/10 bg-black w-full">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <div class="col-span-2 md:col-span-1">
+                     <a href="prompster.html" class="flex items-center gap-2 mb-4">
+                        <img src="logo.png" alt="Prompster" class="h-8 w-auto object-contain rounded-[50%]">
+                    </a>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        Empowering creators with the language of the future. <br>Based in San Francisco &amp; Bangalore.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Marketplace</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Trending</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Bundles</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Prompt Guide</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Become a Seller</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-600">
+                <p>© 2024 Prompster Inc. All rights reserved.</p>
+                <div class="flex items-center gap-4 mt-4 md:mt-0">
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:twitter" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:github" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Navigation Logic
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('.iconify');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.setAttribute('data-icon', 'lucide:x');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-icon', 'lucide:menu');
+            }
+        });
+
+        // Content Population
+        document.addEventListener('PrompsterDataLoaded', () => {
+            // About Hero
+            if(siteContent.aboutHero) {
+                document.getElementById('hero-tagline').textContent = siteContent.aboutHero.tagline;
+                document.getElementById('hero-title').innerHTML = siteContent.aboutHero.title;
+                document.getElementById('hero-desc').textContent = siteContent.aboutHero.description;
+            }
+
+            // Mission
+            if(siteContent.mission) {
+                document.getElementById('mission-image').src = siteContent.mission.image;
+                document.getElementById('mission-title').textContent = siteContent.mission.title;
+                document.getElementById('mission-desc1').textContent = siteContent.mission.description1;
+                document.getElementById('mission-desc2').textContent = siteContent.mission.description2;
+                
+                const statsHTML = (siteContent.mission.stats || []).map(stat => `
+                    <div>
+                        <h3 class="text-4xl font-bold text-white mb-1">${stat.value}</h3>
+                        <p class="text-sm text-gray-500">${stat.label}</p>
+                    </div>
+                `).join('');
+                document.getElementById('mission-stats').innerHTML = statsHTML;
+            }
+
+            // Why Choose Us
+            if(siteContent.whyChooseUs) {
+                const grid = document.getElementById('why-choose-grid');
+                grid.innerHTML = (siteContent.whyChooseUs || []).map((item, index) => `
+                    <div class="p-8 rounded-2xl bg-[#080808] border border-white/10 hover:border-${item.color}-500/30 transition-colors reveal-up delay-${(index+1)*100}">
+                        <div class="w-12 h-12 rounded-full bg-${item.color}-900/20 flex items-center justify-center mb-6 text-${item.color}-400">
+                            <span class="iconify" data-icon="${item.icon}" data-width="24"></span>
+                        </div>
+                        <h3 class="text-xl font-medium text-white mb-3">${item.title}</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">${item.description}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Team
+            if(siteContent.team) {
+                const grid = document.getElementById('team-grid');
+                grid.innerHTML = (siteContent.team || []).map((member, index) => `
+                    <div class="team-card group text-center reveal-up delay-${(index+1)*100}">
+                        <div class="relative w-48 h-48 mx-auto rounded-full overflow-hidden mb-6 border-2 border-white/10 ${member.borderHover} transition-colors">
+                            <img src="${member.image}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="${member.name}">
+                        </div>
+                        <h3 class="text-lg font-medium text-white">${member.name}</h3>
+                        <p class="text-sm ${member.roleColor} mb-2">${member.role}</p>
+                        <p class="text-xs text-gray-500 px-4">${member.bio}</p>
+                    </div>
+                `).join('');
+            }
+        });
+    </script>
+    <script src="js/auth-modal.js"></script>
+</body>
+</html>

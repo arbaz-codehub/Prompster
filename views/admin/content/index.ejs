@@ -1,0 +1,183 @@
+<div class="max-w-4xl mx-auto bg-gray-50 dark:bg-[#111111] rounded-xl border border-gray-200 dark:border-white/10 p-8">
+    <h2 class="text-2xl font-bold text-black dark:text-white mb-8">Edit Site Content</h2>
+
+    <form action="/admin/content" method="POST" class="space-y-12">
+        
+        <!-- Hero Section -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">Hero Section</h3>
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Title</label>
+                    <input type="text" name="hero[title]" value="<%= content.hero ? content.hero.title : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tagline</label>
+                    <input type="text" name="hero[tagline]" value="<%= content.hero ? content.hero.tagline : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description</label>
+                    <textarea name="hero[description]" rows="3" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white"><%= content.hero ? content.hero.description : '' %></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">CTA Text</label>
+                    <input type="text" name="hero[cta]" value="<%= content.hero ? content.hero.cta : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Seller -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">Best Seller Section</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Title</label>
+                    <input type="text" name="bestSeller[title]" value="<%= content.bestSeller ? content.bestSeller.title : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Product Name (Display)</label>
+                    <input type="text" name="bestSeller[productName]" value="<%= content.bestSeller ? content.bestSeller.productName : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Price (INR)</label>
+                    <input type="number" name="bestSeller[price]" value="<%= content.bestSeller ? content.bestSeller.price : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                 <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Image URL</label>
+                    <input type="url" name="bestSeller[image]" value="<%= content.bestSeller ? content.bestSeller.image : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+            </div>
+        </section>
+
+        <!-- About Hero Section -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">About Hero Section</h3>
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tagline</label>
+                    <input type="text" name="aboutHero[tagline]" value="<%= content.aboutHero ? content.aboutHero.tagline : 'Our Story' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Title (HTML Supported)</label>
+                    <input type="text" name="aboutHero[title]" value="<%= content.aboutHero ? content.aboutHero.title : 'We are building the <br> <span class=\'text-gradient-accent\'>language of tomorrow.</span>' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description</label>
+                    <textarea name="aboutHero[description]" rows="3" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white"><%= content.aboutHero && content.aboutHero.description ? content.aboutHero.description : 'Prompster is the world\'s first editorial marketplace for synthetic intelligence.' %></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">Mission Section</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Title</label>
+                    <input type="text" name="mission[title]" value="<%= content.mission ? content.mission.title : 'Our Mission' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description 1</label>
+                    <textarea name="mission[description1]" rows="2" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white"><%= content.mission ? content.mission.description1 : '' %></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Description 2</label>
+                    <textarea name="mission[description2]" rows="2" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white"><%= content.mission ? content.mission.description2 : '' %></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Stat 1 Value</label>
+                    <input type="text" name="mission[stats][0][value]" value="<%= content.mission && content.mission.stats && content.mission.stats[0] ? content.mission.stats[0].value : '10k+' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Stat 1 Label</label>
+                    <input type="text" name="mission[stats][0][label]" value="<%= content.mission && content.mission.stats && content.mission.stats[0] ? content.mission.stats[0].label : 'Curated Prompts' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Stat 2 Value</label>
+                    <input type="text" name="mission[stats][1][value]" value="<%= content.mission && content.mission.stats && content.mission.stats[1] ? content.mission.stats[1].value : '50k+' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Stat 2 Label</label>
+                    <input type="text" name="mission[stats][1][label]" value="<%= content.mission && content.mission.stats && content.mission.stats[1] ? content.mission.stats[1].label : 'Active Creators' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Image URL</label>
+                    <input type="text" name="mission[image]" value="<%= content.mission ? content.mission.image : '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white" placeholder="https://...">
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">Why Choose Us (3 Items)</h3>
+            <div class="space-y-6">
+                <% for (let i = 0; i < 3; i++) { %>
+                    <div class="bg-white dark:bg-[#0a0a0a] p-4 border border-gray-200 dark:border-white/10 rounded grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <h4 class="text-black dark:text-white font-medium">Card <%= i + 1 %></h4>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Title</label>
+                            <input type="text" name="whyChooseUs[<%= i %>][title]" value="<%= content.whyChooseUs && content.whyChooseUs[i] ? content.whyChooseUs[i].title : '' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Icon (Lucide name)</label>
+                            <input type="text" name="whyChooseUs[<%= i %>][icon]" value="<%= content.whyChooseUs && content.whyChooseUs[i] ? content.whyChooseUs[i].icon : 'lucide:check' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Color Theme (tailwind keyword)</label>
+                            <input type="text" name="whyChooseUs[<%= i %>][color]" value="<%= content.whyChooseUs && content.whyChooseUs[i] ? content.whyChooseUs[i].color : 'blue' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Description</label>
+                            <textarea name="whyChooseUs[<%= i %>][description]" rows="2" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm"><%= content.whyChooseUs && content.whyChooseUs[i] ? content.whyChooseUs[i].description : '' %></textarea>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+
+        <!-- Team -->
+        <section>
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4 border-b border-gray-200 dark:border-white/10 pb-2">Meet the Team (4 Members)</h3>
+            <div class="space-y-6">
+                <% for (let j = 0; j < 4; j++) { %>
+                    <div class="bg-white dark:bg-[#0a0a0a] p-4 border border-gray-200 dark:border-white/10 rounded grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <h4 class="text-black dark:text-white font-medium">Team Member <%= j + 1 %></h4>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Name</label>
+                            <input type="text" name="team[<%= j %>][name]" value="<%= content.team && content.team[j] ? content.team[j].name : '' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Role</label>
+                            <input type="text" name="team[<%= j %>][role]" value="<%= content.team && content.team[j] ? content.team[j].role : '' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Role Tailwind Col Class</label>
+                            <input type="text" name="team[<%= j %>][roleColor]" value="<%= content.team && content.team[j] ? content.team[j].roleColor : 'text-black dark:text-white' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Hover Border Col Class</label>
+                            <input type="text" name="team[<%= j %>][borderHover]" value="<%= content.team && content.team[j] ? content.team[j].borderHover : 'group-hover:border-black dark:border-white' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Bio</label>
+                            <input type="text" name="team[<%= j %>][bio]" value="<%= content.team && content.team[j] ? content.team[j].bio : '' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Image URL</label>
+                            <input type="text" name="team[<%= j %>][image]" value="<%= content.team && content.team[j] ? content.team[j].image : '' %>" class="w-full bg-gray-50 dark:bg-[#111111] border border-gray-300 dark:border-white/20 rounded p-2 text-black dark:text-white text-sm">
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </section>
+
+        <div class="pt-6 border-t border-gray-200 dark:border-white/10 flex justify-end">
+            <button type="submit" class="px-6 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 font-medium rounded transition">Save Content</button>
+        </div>
+
+    </form>
+</div>

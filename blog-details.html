@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Details | Prompster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .prose-custom {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #d1d5db;
+        }
+        .prose-custom p { margin-bottom: 2rem; }
+        .prose-custom h2 { color: white; font-size: 2rem; font-weight: 600; margin-top: 3rem; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+        .prose-custom h3 { color: white; font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+        .prose-custom ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 2rem; color: #9ca3af; }
+        .prose-custom li { margin-bottom: 0.75rem; }
+        .prose-custom strong { color: white; font-weight: 600; }
+        .prose-custom blockquote { border-left: 4px solid #3b82f6; padding-left: 1.5rem; font-style: italic; color: #94a3b8; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 2rem; }
+        .prose-custom .highlight-block { background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1)); border-left: 4px solid #3b82f6; border-radius: 0 0.5rem 0.5rem 0; padding: 1.5rem 2rem; margin: 2.5rem 0; position: relative; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); }
+        .prose-custom .highlight-block p { margin-bottom: 0; color: #f1f5f9; font-size: 1.25rem; font-weight: 500; line-height: 1.6; font-style: italic; }
+        .prose-custom .highlight-block strong { color: #60a5fa; font-style: normal; }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Shiny CTA CSS */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoMXYtMUgwem00MCA1aDF2LTFINDUweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="prompster.html" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-white font-medium transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs"><span>Sign In</span></button>
+                </div>
+                 <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+            <div class="pt-4">
+                 <div class="inline-block bg-transparent scale-90 origin-left">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-20 container mx-auto px-6 max-w-4xl relative min-h-screen flex flex-col">
+        
+        <!-- Breadcrumb & Meta -->
+        <div class="mb-8 pt-10">
+            <a href="blog.html" class="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors mb-6 w-fit">
+                <span class="iconify" data-icon="lucide:arrow-left"></span>
+                Back to Blog
+            </a>
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-6">
+                <span id="post-category" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-300 rounded-full text-xs font-medium">Featured</span>
+                <span id="post-date">Feb 15, 2026</span>
+                <span>•</span>
+                <span id="post-author">By Sarah Connor</span>
+            </div>
+            <h1 id="post-title" class="text-4xl md:text-5xl lg:text-6xl font-medium text-white leading-tight mb-8">The Future of Prompt Engineering: What to Expect in 2026</h1>
+        </div>
+
+        <!-- Featured Image -->
+        <div class="rounded-3xl overflow-hidden aspect-video border border-white/10 mb-12">
+            <img id="post-image" src="https://images.unsplash.com/photo-1675271591211-126ad94e495d?q=80&w=1200&auto=format&fit=crop" 
+                 class="w-full h-full object-cover" 
+                 alt="Future of Prompt Engineering">
+        </div>
+
+        <!-- Article Content -->
+        <article id="post-content" class="prose-custom">
+            <!-- Content will be injected here -->
+        </article>
+
+        <!-- Share & Tags -->
+        <div class="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex gap-2">
+                <span class="text-gray-500 text-sm mr-2">Tags:</span>
+                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">AI</span>
+                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Future</span>
+                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Engineering</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-gray-500 text-sm">Share:</span>
+                <button class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"><span class="iconify" data-icon="lucide:twitter"></span></button>
+                <button class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"><span class="iconify" data-icon="lucide:linkedin"></span></button>
+                <button class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"><span class="iconify" data-icon="lucide:link"></span></button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-16 pb-8 border-t border-white/10 bg-black w-full">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <div class="col-span-2 md:col-span-1">
+                     <a href="prompster.html" class="flex items-center gap-2 mb-4">
+                        <img src="logo.png" alt="Prompster" class="h-8 w-auto object-contain rounded-[50%]">
+                    </a>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        Empowering creators with the language of the future. <br>Based in San Francisco &amp; Bangalore.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Marketplace</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Trending</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Bundles</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Prompt Guide</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Become a Seller</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="text-white text-sm font-medium mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-600">
+                <p>© 2024 Prompster Inc. All rights reserved.</p>
+                <div class="flex items-center gap-4 mt-4 md:mt-0">
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:twitter" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:github" data-width="16"></span>
+                    <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Navigation Logic
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('.iconify');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.setAttribute('data-icon', 'lucide:x');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-icon', 'lucide:menu');
+            }
+        });
+
+        // Dynamic Post Loading
+        document.addEventListener('DOMContentLoaded', async () => {
+             // Parse URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                showError('No blog ID provided.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/blogs/${id}`);
+                if (!response.ok) throw new Error('Post not found');
+                const post = await response.json();
+
+                // Update DOM
+                document.title = `${post.title} | Prompster Blog`;
+                document.getElementById('post-category').innerText = post.category || 'Blog';
+                
+                // Format Date
+                const dateObj = new Date(post.date || post.createdAt);
+                document.getElementById('post-date').innerText = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                document.getElementById('post-author').innerText = `By ${post.author}`;
+                document.getElementById('post-title').innerText = post.title;
+                document.getElementById('post-image').src = post.image;
+                document.getElementById('post-image').alt = post.title;
+                document.getElementById('post-content').innerHTML = post.fullContent || post.desc; // Fallback
+
+            } catch (err) {
+                 console.error(err);
+                 showError('The article you are looking for does not exist or is unavailable.');
+            }
+        });
+
+        function showError(msg) {
+             document.querySelector('main').innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-[50vh] text-center px-6">
+                    <h1 class="text-4xl text-white font-bold mb-4">Post Not Found</h1>
+                    <p class="text-gray-400 mb-8">${msg}</p>
+                    <a href="blog.html" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-colors">Back to Blog</a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

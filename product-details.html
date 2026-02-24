@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Prompster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Shiny CTA CSS (reused) */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200 flex flex-col min-h-screen">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoMXYtMUgwem00MCA1aDF2LTFINDUweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="prompster.html" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs"><span>Sign In</span></button>
+                </div>
+                 <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-28 pb-20 container mx-auto px-6 max-w-7xl flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Left Column: Content -->
+            <div class="lg:col-span-2">
+                <!-- Breadcrumb -->
+                <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                    <a href="browse-prompt.html" class="hover:text-white transition-colors">Products</a>
+                    <span class="iconify" data-icon="lucide:chevron-right" data-width="12"></span>
+                    <span id="breadcrumb-title" class="text-gray-300">Product</span>
+                </div>
+
+                <!-- Product Image -->
+                <div class="rounded-2xl border border-white/10 overflow-hidden mb-8 bg-gray-900 aspect-video relative group">
+                    <img id="product-image" src="" alt="Product Image" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+
+                <!-- Header Info -->
+                <div class="mb-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span id="product-tag" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-300 text-xs font-medium rounded-full">Tag</span>
+                        <div class="flex items-center gap-1 text-yellow-500">
+                             <span class="iconify" data-icon="lucide:star" data-width="14"></span>
+                             <span id="product-rating" class="text-sm font-medium text-gray-300">5.0</span>
+                             <span id="product-reviews-count" class="text-xs text-gray-500 ml-1">(0)</span>
+                        </div>
+                    </div>
+                    <h1 id="product-title" class="text-4xl md:text-5xl font-medium text-white mb-4">Product Title</h1>
+                    <p id="product-desc" class="text-lg text-gray-400 leading-relaxed">Product description goes here.</p>
+                </div>
+
+                <!-- Hook Point -->
+                <div class="mb-12 p-8 rounded-2xl bg-white/[0.03] border border-white/5">
+                    <h3 class="text-xl font-medium text-white mb-4 flex items-center gap-2">
+                        <span class="iconify text-yellow-400" data-icon="lucide:sparkles"></span>
+                        Why you need this
+                    </h3>
+                    <p id="product-hook" class="text-gray-300 text-lg italic">"This is the key selling proposition that makes you want to buy it."</p>
+                </div>
+
+                <!-- What's Inside -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-medium text-white mb-6">What's Inside</h3>
+                    <ul id="product-contents" class="grid sm:grid-cols-2 gap-4">
+                        <!-- JS Populated -->
+                    </ul>
+                </div>
+
+                <!-- Social Proof / Reviews -->
+                <div>
+                     <h3 class="text-2xl font-medium text-white mb-6">Reviews</h3>
+                     <div id="product-reviews" class="space-y-6">
+                         <!-- JS Populated -->
+                     </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Sticky Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-28">
+                    <div class="p-6 md:p-8 rounded-2xl border border-white/10 bg-[#080808] shadow-2xl relative overflow-hidden">
+                         <!-- Gradient Glow -->
+                         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                         <!-- Content based on logic -->
+                         <div id="sidebar-content">
+                            <!-- Loader -->
+                            <div class="h-64 flex items-center justify-center">
+                                <span class="iconify animate-spin text-gray-500" data-icon="lucide:loader-2" data-width="24"></span>
+                            </div>
+                         </div>
+                    </div>
+
+                    <!-- Security Badge -->
+                    <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+                        <span class="iconify" data-icon="lucide:shield-check"></span>
+                        Secure Payment via Stripe & PayPal
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-16 pb-8 border-t border-white/10 bg-black w-full">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <p class="text-center text-xs text-gray-600">© 2024 Prompster Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+
+    <script>
+        const EXCHANGE_RATE = 84;
+
+        // Mobile Menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                showError('No product ID provided.');
+                return;
+            }
+
+            // Show Loader
+            const mainContent = document.querySelector('main');
+            const originalContent = mainContent.innerHTML;
+            mainContent.innerHTML = `
+                <div class="h-[60vh] flex flex-col items-center justify-center text-center">
+                    <span class="iconify animate-spin text-blue-500 w-12 h-12 mb-4" data-icon="lucide:loader-2"></span>
+                    <h2 class="text-xl text-white font-medium">Loading Product...</h2>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/products/${id}`);
+                if (!response.ok) throw new Error('Product not found');
+                const product = await response.json();
+
+                // Restore layout structure (clearing the loader)
+                mainContent.innerHTML = originalContent; // This is a bit risky if event listeners were attached, but we are re-populating. 
+                // Better approach: Restore the grid structure manually or re-fetch the HTML structure is complex.
+                // However, since we just overwrote innerHTML, the original structure is lost. 
+                // Let's rewrite the structure dynamically or just hide/show loader.
+                // Re-writing structure as I possess the full HTML context in the tool.
+                
+                renderProduct(product);
+
+            } catch (err) {
+                console.error(err);
+                showError('Product not found or unavailable.');
+            }
+        });
+
+        function showError(msg) {
+             document.querySelector('main').innerHTML = `
+                <div class="h-[60vh] flex flex-col items-center justify-center text-center px-6">
+                    <span class="iconify text-gray-600 w-16 h-16 mb-4" data-icon="lucide:alert-circle"></span>
+                    <h2 class="text-2xl text-white font-medium mb-2">Oops!</h2>
+                    <p class="text-gray-400 mb-6">${msg}</p>
+                    <a href="browse-prompt.html" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">Browse Products</a>
+                </div>
+            `;
+        }
+
+        function renderProduct(product) {
+             // 1. Breadcrumb
+             document.getElementById('breadcrumb-title').textContent = product.title;
+             
+             // 2. Image
+             document.getElementById('product-image').src = product.image;
+             
+             // 3. Header Info
+             const tagEl = document.getElementById('product-tag');
+             tagEl.textContent = product.tag || product.type || 'Product';
+             // Adjust tag color if needed, simplified for now
+             
+             document.getElementById('product-rating').textContent = product.rating || 'New';
+             const reviewsCount = product.reviews ? product.reviews.length : 0;
+             document.getElementById('product-reviews-count').textContent = `(${reviewsCount} reviews)`;
+             
+             document.getElementById('product-title').textContent = product.title;
+             document.getElementById('product-desc').textContent = product.desc;
+             
+             // 4. Hook
+             const hookEl = document.getElementById('product-hook');
+             if(product.hook) {
+                 hookEl.textContent = `"${product.hook}"`;
+             } else {
+                 hookEl.parentElement.classList.add('hidden');
+             }
+
+             // 5. What's Inside
+             const contentsEl = document.getElementById('product-contents');
+             if (product.whatsInside && product.whatsInside.length > 0) {
+                 contentsEl.innerHTML = product.whatsInside.map(item => `
+                     <li class="flex items-start gap-3 text-gray-400 text-sm">
+                         <span class="iconify text-blue-400 mt-0.5" data-icon="lucide:check-circle-2" data-width="16"></span>
+                         ${item}
+                     </li>
+                 `).join('');
+             } else {
+                 contentsEl.innerHTML = `<li class="text-gray-500">Standard license included.</li>`;
+             }
+
+             // 6. Reviews
+             const reviewsEl = document.getElementById('product-reviews');
+             if (reviewsCount > 0) {
+                 reviewsEl.innerHTML = product.reviews.map(review => `
+                    <div class="border-b border-white/5 pb-6 last:border-0 last:pb-0">
+                        <div class="flex items-center gap-2 mb-2">
+                             <span class="font-medium text-white text-sm">${review.user || 'User'}</span>
+                             <div class="flex text-yellow-500">
+                                 ${Array(review.rating || 5).fill('<span class="iconify" data-icon="ri:star-fill" data-width="12"></span>').join('')}
+                             </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">"${review.text}"</p>
+                    </div>
+                 `).join('');
+             } else {
+                 reviewsEl.innerHTML = `<p class="text-gray-500 italic">No reviews yet. Be the first to review!</p>`;
+             }
+
+        // 7. Sidebar (Price & Actions)
+             const sidebarEl = document.getElementById('sidebar-content');
+             if (product.isFree || product.isDailyDrop) {
+                 // FREE
+                 sidebarEl.innerHTML = `
+                    <h2 class="text-2xl font-medium text-white mb-2">Claim it for Free</h2>
+                    <p class="text-sm text-gray-400 mb-6">Enter your email to receive the download link instantly.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1.5 uppercase tracking-wide">Email Address</label>
+                            <input type="email" id="claim-email" placeholder="you@example.com" class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50 transition-colors placeholder-gray-600">
+                        </div>
+                        
+                        <button id="claim-btn" class="w-full bg-white text-black font-medium py-3 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                            <span>Claim & Download</span>
+                            <span class="iconify" data-icon="lucide:download" data-width="16"></span>
+                        </button>
+                        <p id="claim-msg" class="text-center text-sm text-green-400 hidden">✓ Redirecting to download...</p>
+                        <p id="claim-error" class="text-center text-sm text-red-400 hidden"></p>
+                    </div>
+                 `;
+                 
+                 // Re-attach listener
+                 setTimeout(() => {
+                     const btn = document.getElementById('claim-btn');
+                     if(btn) btn.onclick = () => handleClaim(product._id);
+                 }, 100);
+
+             } else {
+                 // PAID
+                 const rawUsd = Number(product.priceUsd);
+                 const usdPrice = (rawUsd > 0) ? rawUsd.toFixed(2) : (product.price / EXCHANGE_RATE).toFixed(2);
+                 
+                 let discountHtml = '';
+                 if (product.discountPercentage && product.discountPercentage > 0) {
+                     const origPrice = product.price / (1 - (product.discountPercentage / 100));
+                     let origUsdVal = (Number(product.priceUsd) > 0) 
+                        ? Number(product.priceUsd) / (1 - (product.discountPercentage / 100))
+                        : origPrice / EXCHANGE_RATE;
+                     
+                     discountHtml = `
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-base text-gray-500 line-through">₹${Math.round(origPrice).toLocaleString('en-IN')}</span>
+                            <span class="text-sm text-gray-500 line-through opacity-70">($${origUsdVal.toFixed(2)})</span>
+                            <span class="ml-2 text-xs font-bold text-green-400 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">${product.discountPercentage}% OFF</span>
+                        </div>
+                     `;
+                 }
+
+                 sidebarEl.innerHTML = `
+                    <div class="mb-6">
+                        <span class="text-sm text-gray-400 block mb-1">Total Price</span>
+                        ${discountHtml}
+                        <div class="flex items-baseline gap-2">
+                             <span class="text-3xl font-medium text-white">₹${product.price.toLocaleString('en-IN')}</span>
+                             <span class="text-lg text-gray-500">/ $${usdPrice}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button onclick="window.location.href='${product.linkInr || '#'}'" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            Buy Now - ₹${product.price.toLocaleString('en-IN')}
+                        </button>
+                        <button onclick="window.location.href='${product.linkUsd || '#'}'" class="w-full bg-transparent border border-white/20 hover:bg-white/5 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            Buy Now - $${usdPrice} USD
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-white/5">
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-3 text-sm text-gray-400">
+                                <span class="iconify text-green-400" data-icon="lucide:check"></span> Instant Delivery
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-gray-400">
+                                <span class="iconify text-green-400" data-icon="lucide:check"></span> Lifetime Access
+                            </li>
+                             <li class="flex items-center gap-3 text-sm text-gray-400">
+                                <span class="iconify text-green-400" data-icon="lucide:check"></span> Commercial License
+                            </li>
+                        </ul>
+                    </div>
+                 `;
+             }
+        }
+
+        async function handleClaim(productId) {
+             const btn = document.getElementById('claim-btn');
+             const msg = document.getElementById('claim-msg');
+             const errEl = document.getElementById('claim-error');
+             const input = document.getElementById('claim-email');
+             const email = input.value;
+
+             if(!email || !email.includes('@')) {
+                 input.classList.add('border-red-500');
+                 return;
+             }
+             
+             // Reset UI
+             input.classList.remove('border-red-500');
+             errEl.classList.add('hidden');
+             btn.innerHTML = `<span class="iconify animate-spin" data-icon="lucide:loader-2"></span> Processing...`;
+             btn.disabled = true;
+
+             try {
+                 const res = await fetch('/api/subscribe', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ email, productId })
+                 });
+                 
+                 const data = await res.json();
+                 
+                 if (data.success) {
+                     btn.classList.add('hidden');
+                     msg.classList.remove('hidden');
+                     
+                     if (data.downloadLink) {
+                         setTimeout(() => {
+                             window.location.href = data.downloadLink;
+                         }, 1500);
+                     } else {
+                         msg.textContent = '✓ Subscribed! (No download link set)';
+                     }
+                 } else {
+                     throw new Error(data.error || 'Subscription failed');
+                 }
+
+             } catch (e) {
+                 console.error(e);
+                 btn.disabled = false;
+                 btn.innerHTML = `<span>Claim & Download</span><span class="iconify" data-icon="lucide:download"></span>`;
+                 errEl.textContent = e.message;
+                 errEl.classList.remove('hidden');
+             }
+        }
+    </script>
+    <script src="js/auth-modal.js"></script>
+</body>
+</html>

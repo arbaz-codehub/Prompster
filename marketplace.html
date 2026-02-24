@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace | Prompster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup - Consistent with other pages */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Shiny CTA CSS */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; }
+        
+        /* Card Hover Effect */
+        .prompt-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .prompt-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .prompt-card:hover .card-shimmer { opacity: 1; transform: translateX(100%); transition: transform 0.8s; }
+        .card-shimmer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); transform: translateX(-100%); pointer-events: none; opacity: 0; }
+
+        /* Custom Checkbox/Radio Styles */
+        .custom-radio:checked + div { border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.1); }
+        .custom-checkbox:checked + div { background-color: #3b82f6; border-color: #3b82f6; }
+        
+        /* Sub-menu animation */
+        .sub-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .sub-menu.open {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+        .rotate-icon { transition: transform 0.2s; }
+        .rotate-icon.rotated { transform: rotate(90deg); }
+
+        /* Category Tab Active State */
+        .category-tab.active {
+            background-color: white;
+            color: black;
+            border-color: white;
+        }
+
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgNDBoMXYtMUgwem00MCA1aDF2LTFINDUweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPgo8L3N2Zz4=')] opacity-30"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="prompster.html" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-white font-medium transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs"><span>Sign In</span></button>
+                </div>
+                 <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="prompster.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-white font-medium transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+            <div class="pt-4">
+                 <div class="inline-block bg-transparent scale-90 origin-left">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <main class="pt-24 pb-20 container mx-auto px-6 max-w-7xl relative min-h-screen flex flex-col">
+        
+        <!-- Fixed Toggle Button for Filter Sidebar -->
+        <button onclick="toggleSidebar()" class="hidden md:flex fixed left-0 top-1/2 -translate-y-1/2 z-50 w-8 h-12 bg-blue-600 rounded-r-xl items-center justify-center text-white hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] border-y border-r border-white/10 group">
+             <span class="iconify w-5 h-5 transition-transform duration-300 group-hover:scale-110" data-icon="lucide:chevron-right"></span>
+        </button>
+
+        <!-- Sidebar Drawer (Advanced Filtering) -->
+        <div id="sidebar-drawer" class="fixed top-0 left-0 h-full w-80 bg-[#050505] border-r border-white/10 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
+            <div class="p-6 h-full overflow-y-auto custom-scrollbar">
+                <div class="flex items-center justify-between mb-8">
+                     <h2 class="text-xl font-medium text-white">Filters</h2>
+                     <button onclick="toggleSidebar()" class="text-gray-400 hover:text-white transition-colors">
+                        <span class="iconify w-5 h-5" data-icon="lucide:x"></span>
+                     </button>
+                </div>
+                <aside class="space-y-8 h-fit pb-10">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-white">Refine Search</h3>
+                        <button onclick="clearFilters()" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">Clear All</button>
+                    </div>
+                
+                <!-- Filter Group: Price -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between cursor-pointer group" onclick="toggleSection('price-section', this)">
+                        <h3 class="text-xs font-semibold text-gray-400 tracking-widest uppercase">Price</h3>
+                        <span class="iconify text-gray-500 group-hover:text-white transition-colors rotate-icon rotated" data-icon="lucide:chevron-down" data-width="16"></span>
+                    </div>
+                    
+                    <div id="price-section" class="space-y-1">
+                         <label class="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors cursor-pointer group">
+                             <input type="checkbox" name="price" value="all" checked class="accent-blue-500 w-4 h-4 bg-transparent border-gray-600 rounded">
+                             <span class="text-sm text-gray-300 group-hover:text-white">All Prices</span>
+                         </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors cursor-pointer group">
+                            <input type="checkbox" name="price" value="Paid" class="accent-blue-500 w-4 h-4 bg-transparent border-gray-600 rounded">
+                            <span class="text-sm text-gray-300 group-hover:text-white">Paid</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors cursor-pointer group">
+                            <input type="checkbox" name="price" value="Free" class="accent-blue-500 w-4 h-4 bg-transparent border-gray-600 rounded">
+                            <span class="text-sm text-gray-300 group-hover:text-white">Free</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Separator -->
+                <div class="h-px bg-white/10 w-full"></div>
+
+                <!-- Filter Group: File Format -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between cursor-pointer group" onclick="toggleSection('format-section', this)">
+                        <h3 class="text-xs font-semibold text-gray-400 tracking-widest uppercase">File Format</h3>
+                        <span class="iconify text-gray-500 group-hover:text-white transition-colors rotate-icon rotated" data-icon="lucide:chevron-down" data-width="16"></span>
+                    </div>
+                    <div id="format-section" class="space-y-1">
+                        <!-- Dynamic Formats will be rendered here -->
+                    </div>
+                </div>
+
+                </aside>
+            </div>
+        </div>
+
+        <!-- Main Content (Full Width) -->
+        <div class="w-full flex-1">
+            
+            <!-- Search Bar & Mobile Filter -->
+            <div class="flex flex-col gap-6 mb-8">
+                 <div class="flex gap-3">
+                    <button onclick="toggleSidebar()" class="md:hidden shrink-0 w-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                        <span class="iconify" data-icon="lucide:sliders-horizontal" data-width="24"></span>
+                    </button>
+
+                    <div class="relative group flex-1">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <span class="iconify text-gray-500 group-focus-within:text-blue-400 transition-colors" data-icon="lucide:search" data-width="20"></span>
+                        </div>
+                        <input type="text" 
+                            id="search-input"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all shadow-lg shadow-black/20" 
+                            placeholder="Search everything in Marketplace...">
+                        <!-- Clear Button -->
+                        <div class="absolute inset-y-0 right-4 flex items-center">
+                            <button id="clear-search" class="hidden text-gray-400 hover:text-white transition-colors focus:outline-none p-1 rounded-full hover:bg-white/10">
+                                <span class="iconify w-5 h-5" data-icon="lucide:x"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horizontal Category Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar" id="category-tabs">
+                     <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Grid Header -->
+            <div class="flex flex-col gap-4 mb-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-medium text-white" id="grid-title">All Items</h2>
+                    
+                    <div class="flex items-center gap-3 text-sm text-gray-400">
+                        <span>Sort by:</span>
+                        <div class="relative group/sort">
+                            <select id="sort-select" class="appearance-none bg-black border border-white/10 rounded-lg py-2 pl-4 pr-10 text-white focus:outline-none focus:border-blue-500/50 cursor-pointer hover:bg-white/5 transition-colors min-w-[180px]">
+                                <option value="relevance" class="bg-black text-gray-300 py-2">Relevance</option>
+                                <option value="newest" class="bg-black text-gray-300 py-2">Newest</option>
+                                <option value="price_asc" class="bg-black text-gray-300 py-2">Price: Low to High</option>
+                                <option value="price_desc" class="bg-black text-gray-300 py-2">Price: High to Low</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500 group-hover/sort:text-white transition-colors">
+                                <span class="iconify" data-icon="lucide:chevron-down" data-width="16"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div id="marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+               <!-- Content loaded via JS -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container" class="border-t border-white/10 pt-8 flex items-center justify-center md:justify-between mb-20">
+                <button class="hidden md:flex px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50">
+                    Previous
+                </button>
+                <div class="flex items-center gap-2">
+                    <button class="w-8 h-8 rounded-lg bg-blue-600 text-white text-sm font-medium flex items-center justify-center">1</button>
+                    <button class="w-8 h-8 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white text-sm font-medium flex items-center justify-center transition-colors">2</button>
+                    <button class="w-8 h-8 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white text-sm font-medium flex items-center justify-center transition-colors">3</button>
+                    <span class="text-gray-600">...</span>
+                    <button class="w-8 h-8 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white text-sm font-medium flex items-center justify-center transition-colors">12</button>
+                </div>
+                <button class="hidden md:flex px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+                    Next
+                </button>
+            </div>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-auto pt-16 pb-8 border-t border-white/10 bg-black w-full">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <div class="col-span-2 md:col-span-1">
+                         <a href="prompster.html" class="flex items-center gap-2 mb-4">
+                            <img src="logo.png" alt="Prompster" class="h-8 w-auto object-contain rounded-[50%]">
+                        </a>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            Empowering creators with the language of the future. <br>Based in San Francisco &amp; Bangalore.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Marketplace</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Trending</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">New Arrivals</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Bundles</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Support</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Prompt Guide</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Become a Seller</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Legal</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Terms</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-600">
+                    <p>© 2024 Prompster Inc. All rights reserved.</p>
+                    <div class="flex items-center gap-4 mt-4 md:mt-0">
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:twitter" data-width="16"></span>
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:github" data-width="16"></span>
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        // --- Navigation Logic ---
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('.iconify');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.setAttribute('data-icon', 'lucide:x');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-icon', 'lucide:menu');
+            }
+        });
+
+        // --- Interactions ---
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            // Check if open by checking transform class
+            const isClosed = drawer.classList.contains('-translate-x-full');
+            
+            if (isClosed) {
+                // Open
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // minimal delay to allow display block to apply before opacity transition
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                document.body.style.overflow = 'hidden'; // Prevent background scroll
+            } else {
+                // Close
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = '';
+            }
+        }
+
+        function toggleSection(id, btn) {
+            const content = document.getElementById(id);
+            const icon = btn.querySelector('.rotate-icon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('rotated');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('rotated');
+            }
+        }
+
+        // --- Data & State ---
+        
+        // Data is now loaded from data/products.js (marketplaceItems)
+
+        let state = {
+            category: 'All',
+            searchQuery: '',
+            price: [],
+            formats: [],
+            sortBy: 'relevance',
+            page: 1,
+            itemsPerPage: 12 
+        };
+
+        // --- Render Items ---
+        function renderItems() {
+            const grid = document.getElementById('marketplace-grid');
+            const title = document.getElementById('grid-title');
+            
+            // Filter
+            const filtered = marketplaceItems.filter(item => {
+                const cat = state.category;
+                const matchesCategory = cat === 'All' || item.type === cat || item.category === cat; 
+                const matchesSearch = item.title.toLowerCase().includes(state.searchQuery) || item.desc.toLowerCase().includes(state.searchQuery);
+                
+                // Price Logic
+                let matchesPrice = true;
+                if(state.price.length > 0) {
+                     const isFree = item.isFree || item.price === 0;
+                     const wantFree = state.price.includes('Free');
+                     const wantPaid = state.price.includes('Paid');
+                     
+                     if (wantFree && wantPaid) matchesPrice = true;
+                     else if (wantFree) matchesPrice = isFree;
+                     else if (wantPaid) matchesPrice = !isFree;
+                }
+
+                // Format Logic
+                let matchesFormat = true;
+                if(state.formats.length > 0) {
+                    matchesFormat = state.formats.includes(item.format);
+                }
+
+                return matchesCategory && matchesSearch && matchesPrice && matchesFormat;
+            });
+
+            // Sort
+            if(state.sortBy === 'price_asc') filtered.sort((a,b) => a.price - b.price);
+            if(state.sortBy === 'price_desc') filtered.sort((a,b) => b.price - a.price);
+            if(state.sortBy === 'newest') filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+            // Default/Relevance: keep original order
+
+            // Update Title
+            if(title) title.innerText = state.searchQuery ? `Search Results for "${state.searchQuery}"` : (state.category === 'All' ? 'All Items' : state.category);
+
+            // Pagination Logic
+            const totalItems = filtered.length;
+            const start = (state.page - 1) * state.itemsPerPage;
+            const end = start + state.itemsPerPage;
+            const paginated = filtered.slice(start, end);
+
+            // Populate Grid
+            if(grid) {
+                if(totalItems === 0) {
+                    grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-20">No items found matching your filters.</div>';
+                } else {
+                    grid.innerHTML = paginated.map(item => {
+                        // Pricing Logic
+                        let priceDisplay;
+                        if (item.isDailyDrop) {
+                            priceDisplay = `<span class="font-bold text-purple-400 animate-pulse">Free for Today</span>`;
+                        } else if (item.isFree || item.price === 0) {
+                            priceDisplay = `<span class="font-bold text-green-400">Free</span>`;
+                        } else {
+                            const priceInr = item.price ? `₹${item.price.toLocaleString('en-IN')}` : '';
+                            const usdVal = item.priceUsd ? item.priceUsd : ((item.price || 0) / 84).toFixed(2);
+                            
+                            let discountHtml = '';
+                            if (item.discountPercentage && item.discountPercentage > 0) {
+                                const origPrice = item.price / (1 - (item.discountPercentage / 100));
+                                let origUsdVal = (Number(item.priceUsd) > 0) 
+                                    ? Number(item.priceUsd) / (1 - (item.discountPercentage / 100))
+                                    : origPrice / 84;
+                                
+                                discountHtml = `
+                                    <div class="flex items-center justify-end gap-1.5 mb-1">
+                                        <span class="text-[11px] text-gray-500 line-through opacity-70">₹${Math.round(origPrice).toLocaleString('en-IN')} ($${origUsdVal.toFixed(2)})</span>
+                                        <span class="text-[9px] font-bold text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded border border-green-500/20">${item.discountPercentage}% OFF</span>
+                                    </div>
+                                `;
+                            }
+                            
+                            priceDisplay = `<div class="flex flex-col items-end">
+                                ${discountHtml}
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-white font-bold">${priceInr}</span>
+                                    <span class="text-xs text-gray-400">($${usdVal})</span>
+                                </div>
+                            </div>`;
+                        }
+
+                        return `
+                        <article onclick="window.location.href='product-details.html?id=${item._id}'" class="prompt-card group relative bg-black border border-white/10 rounded-xl overflow-hidden cursor-pointer flex flex-col h-full transform hover:scale-[1.01] transition-all duration-300">
+                            <div class="card-shimmer"></div>
+                            <!-- Image -->
+                            <div class="aspect-[4/3] bg-gray-900 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10"></div>
+                                <img src="${item.image}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${item.title}">
+                                <div class="absolute top-3 left-3 z-20 flex gap-2 flex-wrap pr-3 w-full">
+                                    <span class="bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] px-2 py-1 rounded tracking-wide font-medium">${item.category || item.type}</span>
+                                    ${item.isFree ? '<span class="bg-green-500/20 backdrop-blur-md border border-green-500/30 text-green-400 text-[10px] px-2 py-1 rounded tracking-wide font-bold">FREE</span>' : ''}
+                                    ${(item.discountPercentage && item.discountPercentage > 0 && !item.isFree && !item.isDailyDrop) ? `<span class="bg-blue-500/20 backdrop-blur-md border border-blue-500/30 text-blue-400 text-[10px] px-2 py-1 rounded tracking-wide font-bold">-${item.discountPercentage}% OFF</span>` : ''}
+                                </div>
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="p-4 flex flex-col flex-1 gap-3">
+                                <div>
+                                    <h3 class="text-base font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-1">${item.title}</h3>
+                                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">${item.desc}</p>
+                                </div>
+                                
+                                <div class="flex items-center justify-between border-t border-white/5 pt-3 mt-auto">
+                                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                                        <span class="bg-white/5 px-2 py-1 rounded">${item.format || 'N/A'}</span>
+                                    </div>
+                                    <div class="text-right">
+                                        ${priceDisplay}
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    `}).join('');
+                }
+            }
+
+            renderPagination(totalItems);
+        }
+
+        function renderPagination(totalItems) {
+            const container = document.getElementById('pagination-container');
+            if (!container) return;
+
+            const totalPages = Math.ceil(totalItems / state.itemsPerPage);
+            
+            if (totalPages <= 1) {
+                container.innerHTML = ''; // Hide if only 1 page
+                container.classList.add('hidden');
+                return;
+            }
+            container.classList.remove('hidden');
+
+            let html = `
+                <button onclick="changePage(${state.page - 1})" ${state.page === 1 ? 'disabled' : ''} class="hidden md:flex px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <div class="flex items-center gap-2">
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                // Determine if we should show this page number
+                // Show 1, Last, and pages around current
+                if (i === 1 || i === totalPages || (i >= state.page - 1 && i <= state.page + 1)) {
+                     const isActive = i === state.page;
+                     html += `
+                        <button onclick="changePage(${i})" class="w-8 h-8 rounded-lg ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-white/5 text-gray-400 hover:text-white'} text-sm font-medium flex items-center justify-center transition-colors">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === state.page - 2 || i === state.page + 2) {
+                     html += `<span class="text-gray-600">...</span>`;
+                }
+            }
+
+            html += `
+                </div>
+                <button onclick="changePage(${state.page + 1})" ${state.page === totalPages ? 'disabled' : ''} class="hidden md:flex px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        window.changePage = function(page) {
+            state.page = page;
+            renderItems();
+            const grid = document.getElementById('marketplace-grid');
+            if(grid) grid.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // --- Categories & Formats ---
+        
+        function renderCategoryTabs() {
+            const container = document.getElementById('category-tabs');
+            if(!container) return;
+            const cats = ['All', ...(window.categories || ['Prompts', 'Editing Packs', 'Thumbnails', 'Music/SFX', 'Content Creation'])];
+            
+            container.innerHTML = cats.map(cat => {
+                const isActive = state.category === cat ? 'active' : '';
+                return `<button class="category-tab ${isActive} px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm whitespace-nowrap text-gray-300 hover:bg-white/10 transition-all" data-category="${cat}">${cat}</button>`;
+            }).join('');
+
+            container.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    container.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    state.category = tab.getAttribute('data-category');
+                    state.page = 1; // Reset page
+                    renderItems();
+                });
+            });
+        }
+
+        function renderFormatFilters() {
+            const container = document.getElementById('format-section');
+            if(!container) return;
+            const formats = window.formats || ['Text', 'PDF', 'Image', 'Video', 'Zip'];
+            
+            container.innerHTML = formats.map(fmt => `
+                <label class="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors cursor-pointer group">
+                    <input type="checkbox" name="format" value="${fmt}" class="accent-blue-500 w-4 h-4 bg-transparent border-gray-600 rounded">
+                    <span class="text-sm text-gray-300 group-hover:text-white">${fmt}</span>
+                </label>
+            `).join('');
+            
+            setupFilters('format', 'formats');
+        }
+
+        function setupFilters(name, stateKey) {
+            document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const val = cb.value;
+                    const isAll = val === 'all';
+                    
+                    if (stateKey === 'price') {
+                        if (isAll) {
+                             if(cb.checked) {
+                                state.price = []; 
+                                document.querySelectorAll('input[name="price"]').forEach(i => { if(i.value !== 'all') i.checked = false; });
+                             }
+                        } else {
+                            if(cb.checked) {
+                                state.price.push(val);
+                                const allBox = document.querySelector('input[name="price"][value="all"]');
+                                if(allBox) allBox.checked = false;
+                            } else {
+                                state.price = state.price.filter(p => p !== val);
+                                if(state.price.length === 0) {
+                                    const allBox = document.querySelector('input[name="price"][value="all"]');
+                                    if(allBox) allBox.checked = true;
+                                }
+                            }
+                        }
+                    } else if (stateKey === 'formats') {
+                         if(cb.checked) state.formats.push(val);
+                         else state.formats = state.formats.filter(f => f !== val);
+                    }
+                    state.page = 1; // Reset page
+                    renderItems();
+                });
+            });
+        }
+
+        function clearFilters() {
+            state.searchQuery = '';
+            state.price = [];
+            state.formats = [];
+            state.page = 1;
+            // Reset inputs
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+                if(cb.value === 'all') cb.checked = true;
+            });
+            const searchInput = document.getElementById('search-input');
+            if(searchInput) searchInput.value = '';
+            const clearBtn = document.getElementById('clear-search');
+            if(clearBtn) clearBtn.classList.add('hidden');
+            
+            renderItems();
+        }
+
+        // --- Listeners ---
+        const searchInput = document.getElementById('search-input');
+        const clearBtn = document.getElementById('clear-search');
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value.toLowerCase();
+                state.page = 1;
+                if(clearBtn) {
+                     if(state.searchQuery) clearBtn.classList.remove('hidden');
+                     else clearBtn.classList.add('hidden');
+                }
+                renderItems();
+            });
+        }
+        if(clearBtn) {
+             clearBtn.addEventListener('click', clearFilters); 
+        }
+
+        const sortSelect = document.getElementById('sort-select');
+        if(sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                state.sortBy = e.target.value;
+                state.page = 1;
+                renderItems();
+            });
+        }
+
+        document.addEventListener('PrompsterDataLoaded', () => {
+             renderCategoryTabs();
+             renderFormatFilters();
+             setupFilters('price', 'price');
+             renderItems();
+        });
+        
+        // Re-entrant check
+        if(window.categories && window.formats) {
+             renderCategoryTabs();
+             renderFormatFilters();
+             renderItems();
+        }
+    </script>
+
+// Duplicate script content removed
+    <script src="js/auth-modal.js"></script>
+</body>
+</html>

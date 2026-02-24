@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        let presetTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if(presetTheme === 'dark') document.documentElement.classList.add('dark');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompster Admin</title>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-white dark:bg-[#0a0a0a] text-black dark:text-gray-100">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-white dark:bg-[#0a0a0a] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-black dark:border-t-white rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-50 dark:bg-[#111111] border-r border-gray-200 dark:border-white/10 flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-gray-200 dark:border-white/10">
+                <h1 class="text-xl font-bold text-black dark:text-white">Prompster Admin</h1>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <% if (typeof adminRole !== 'undefined' && adminRole === 'admin') { %>
+                    <a href="/admin" class="block px-4 py-2 rounded hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:text-white transition">Dashboard</a>
+                    <a href="/admin/products" class="block px-4 py-2 rounded hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:text-white transition">Products</a>
+                <% } %>
+                <a href="/admin/blogs" class="block px-4 py-2 rounded hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:text-white transition">Blogs</a>
+                <% if (typeof adminRole !== 'undefined' && adminRole === 'admin') { %>
+                    <a href="/admin/content" class="block px-4 py-2 rounded hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:text-white transition">Site Content</a>
+                    <a href="/admin/settings" class="block px-4 py-2 rounded hover:bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-black dark:text-white transition">Settings</a>
+                <% } %>
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-white/10 space-y-2">
+                <a href="/admin/logout" class="block px-4 py-2 rounded border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white text-center transition">Logout</a>
+                <a href="/" target="_blank" class="block px-4 py-2 rounded bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-center transition">View Site</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto bg-white dark:bg-[#0a0a0a]">
+            <header class="h-16 bg-gray-50 dark:bg-[#111111] border-b border-gray-200 dark:border-white/10 flex items-center justify-between px-8">
+                <h2 class="text-lg font-medium text-black dark:text-white"><%= pageTitle || 'Dashboard' %></h2>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 border-l border-gray-200 dark:border-white/10 pl-6">
+                        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors focus:outline-none flex items-center justify-center border border-transparent mr-2">
+                            <span id="theme-toggle-light-icon" class="iconify hidden" data-icon="lucide:sun" data-width="20"></span>
+                            <span id="theme-toggle-dark-icon" class="iconify hidden" data-icon="lucide:moon" data-width="20"></span>
+                        </button>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Admin User</span>
+                        <img src="/logo.png" alt="Admin Avatar" class="w-8 h-8 rounded-[50%] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 object-contain p-1">
+                    </div>
+                </div>
+            </header>
+            
+            <div class="p-8">
+                <%- body %>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('aside nav a');
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath || (currentPath.startsWith(href) && href !== '/admin')) {
+                    link.classList.add('bg-white', 'text-black', 'dark:bg-black', 'dark:text-white', 'font-medium', 'shadow-sm');
+                    link.classList.remove('hover:bg-gray-200', 'dark:hover:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+                }
+            });
+
+            const themeBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            if (themeBtn) {
+                if (document.documentElement.classList.contains('dark')) {
+                    lightIcon.classList.remove('hidden');
+                } else {
+                    darkIcon.classList.remove('hidden');
+                }
+                
+                themeBtn.addEventListener('click', () => {
+                    darkIcon.classList.toggle('hidden');
+                    lightIcon.classList.toggle('hidden');
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
+        });
+
+        // Simple Toast Logic
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const colors = type === 'success' ? 'bg-green-600 border border-green-700/50' : 'bg-red-600 border border-red-700/50';
+
+            toast.className = `flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg text-white transform transition-all duration-300 translate-y-10 opacity-0 ${colors} min-w-[300px] z-50`;
+            toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span class="font-medium">\${message}</span>\``;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const msg = urlParams.get('msg');
+        const error = urlParams.get('error');
+
+        if (msg) showToast(msg, 'success');
+        if (error) showToast(error, 'error');
+
+        if (msg || error) {
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    </script>
+</body>
+</html>

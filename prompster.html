@@ -1,0 +1,1001 @@
+<html lang="en" class="scroll-smooth"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompster | Editorial Prompt Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Setup */
+        :root {
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.15);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Typography Override */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to bottom right, #ffffff, #94a3b8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-accent {
+            background: linear-gradient(to right, #60a5fa, #a855f7);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* Grid Pattern Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* Shiny CTA CSS (From Reference) */
+        @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-angle-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; } 
+        @property --gradient-percent { syntax: "<percentage>"; initial-value: 20%; inherits: false; } 
+        @property --gradient-shine { syntax: "<color>"; initial-value: #8484ff; inherits: false; } 
+        
+        .shiny-cta { 
+            --gradient-angle: 0deg; 
+            --gradient-angle-offset: 0deg; 
+            --gradient-percent: 20%; 
+            --gradient-shine: #8484ff; 
+            --shadow-size: 2px; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 9999px; 
+            padding: 0.875rem 2rem; 
+            font-size: 1rem; 
+            line-height: 1.2; 
+            font-weight: 500; 
+            color: #ffffff; 
+            background: linear-gradient(#000000, #000000) padding-box, conic-gradient( from calc(var(--gradient-angle) - var(--gradient-angle-offset)), transparent 0%, #1d4ed8 5%, var(--gradient-shine) 15%, #1d4ed8 30%, transparent 40%, transparent 100% ) border-box; 
+            border: 1px solid transparent; 
+            box-shadow: inset 0 0 0 1px #1a1818; 
+            outline: none; 
+            transition: --gradient-angle-offset 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-percent 800ms cubic-bezier(0.25, 1, 0.5, 1), --gradient-shine 800ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s; 
+            cursor: pointer; 
+            isolation: isolate; 
+            font-family: 'Inter', sans-serif; 
+            z-index: 0; 
+            animation: border-spin 2.5s linear infinite; 
+        } 
+        
+        @keyframes border-spin { to { --gradient-angle: 360deg; } } 
+        .shiny-cta:active { transform: translateY(1px); } 
+        .shiny-cta::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; --size: calc(100% - 6px); --position: 2px; --space: 4px; width: var(--size); height: var(--size); background: radial-gradient(circle at var(--position) var(--position), white 0.5px, transparent 0) padding-box; background-size: var(--space) var(--space); background-repeat: space; mask-image: conic-gradient( from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black ); border-radius: inherit; opacity: 0.4; pointer-events: none; } 
+        .shiny-cta::after { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 100%; aspect-ratio: 1; background: linear-gradient(-50deg, transparent, #1d4ed8, transparent); mask-image: radial-gradient(circle at bottom, transparent 40%, black); opacity: 0.6; animation: shimmer 4s linear infinite; animation-play-state: running; } 
+        .shiny-cta span { position: relative; z-index: 2; display: inline-block; } 
+        .shiny-cta span::before { content: ''; pointer-events: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: -1; --size: calc(100% + 1rem); width: var(--size); height: var(--size); box-shadow: inset 0 -1ex 2rem 4px #1d4ed8; opacity: 0; border-radius: inherit; transition: opacity 800ms cubic-bezier(0.25, 1, 0.5, 1); animation: breathe 4.5s linear infinite; } 
+        @keyframes shimmer { to { transform: translate(-50%, -50%) rotate(360deg);} } 
+        @keyframes breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1);} 50% { transform: translate(-50%, -50%) scale(1.20);} }
+        
+        /* Card Hover Effect */
+        .prompt-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .prompt-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .prompt-card:hover .card-shimmer {
+            opacity: 1;
+            transform: translateX(100%);
+            transition: transform 0.8s;
+        }
+        .card-shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: translateX(-100%);
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .mobile-hide { display: none; }
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30 selection:text-blue-200">
+
+    <!-- Global Loading Spinner -->
+    <div id="global-loader" class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#030303] transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        });
+    </script>
+
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-grid opacity-30"></div>
+        <div class="absolute -top-[200px] -left-[200px] w-[600px] h-[600px] bg-blue-900/20 rounded-full blur-[120px] mix-blend-screen"></div>
+        <div class="absolute top-[20%] right-[-100px] w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[100px] mix-blend-screen"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b-0 border-b-white/5 md:h-16 flex flex-col justify-center transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 max-w-7xl flex justify-between items-center h-16 w-full">
+            <a href="#" class="flex items-center gap-2">
+                <img src="logo.png" alt="Prompster" class="h-10 w-auto object-contain rounded-[50%]">
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Home</a>
+                <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors">Browse Prompts</a>
+                <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors">Marketplace</a>
+                <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors">Blog</a>
+                <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors">About</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Mini Shiny CTA for Login -->
+                <div class="inline-block bg-transparent scale-90 origin-right hidden md:block">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                </div>
+
+                <!-- Hamburger Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-white focus:outline-none">
+                     <span class="iconify w-6 h-6" data-icon="lucide:menu"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-black/90 backdrop-blur-xl absolute top-16 left-0 w-full p-6 flex-col gap-4 shadow-2xl">
+            <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Home</a>
+            <a href="browse-prompt.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Browse Prompts</a>
+            <a href="marketplace.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Marketplace</a>
+            <a href="blog.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block border-b border-white/5">Blog</a>
+            <a href="about.html" class="text-sm text-gray-400 hover:text-white transition-colors py-2 block">About</a>
+            <div class="pt-4">
+                 <div class="inline-block bg-transparent scale-90 origin-left">
+                    <button class="shiny-cta focus:outline-none !py-2 !px-5 !text-xs">
+                        <span>Sign In</span>
+                    </button>
+                 </div>
+            </div>
+        </div>
+    </nav>
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('.iconify');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+                icon.setAttribute('data-icon', 'lucide:x');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+                icon.setAttribute('data-icon', 'lucide:menu');
+            }
+        });
+    </script>
+
+    <main class="relative pt-32 pb-20">
+        
+        <!-- Hero Section -->
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="lg:col-span-7 flex flex-col gap-6 reveal-up">
+                    <div class="flex items-center gap-2 text-blue-400 text-sm font-medium tracking-wide uppercase">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                        <span id="hero-tagline">Next-Gen Prompt Engineering</span>
+                    </div>
+                    <h1 id="hero-title" class="text-5xl md:text-7xl leading-[1.1] font-medium tracking-tight text-white">
+                        Master the art of <br>
+                        <span class="text-gradient-accent italic pr-2">synthetic</span> intelligence.
+                    </h1>
+                    <p id="hero-desc" class="text-lg text-gray-400 max-w-xl leading-relaxed">
+                        A curated marketplace for editorial-grade prompts. Optimized for GPT-4, Midjourney, and Claude.
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center gap-6 mt-4">
+                         <!-- Referenced Shiny CTA -->
+                        <div class="inline-block bg-transparent">
+                            <button id="hero-cta" onclick="window.location.href='marketplace.html'" class="shiny-cta focus:outline-none">
+                                <span>Explore Marketplace</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Visual Element / Feature Card -->
+                <div class="lg:col-span-5 relative reveal-up delay-200">
+                    <div class="relative z-10 animate-float">
+                        <!-- Glass Card: Best Seller -->
+                        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
+                            
+                            <!-- Header -->
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="flex gap-3 items-center">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 flex items-center justify-center">
+                                        <span class="iconify text-yellow-400" data-icon="lucide:trophy" data-width="18"></span>
+                                    </div>
+                                    <div>
+                                        <h3 id="bs-title" class="text-sm font-medium text-white">Best Selling Product</h3>
+                                        <p id="bs-rank" class="text-xs text-yellow-500/80">#1 in Marketplace</p>
+                                    </div>
+                                </div>
+                                <div id="bs-tag" class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-medium">
+                                    Midjourney v6
+                                </div>
+                            </div>
+
+                            <!-- Product Image -->
+                            <div class="relative w-full aspect-video rounded-lg overflow-hidden mb-6 border border-white/10 group">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                                <img id="bs-image" src="" 
+                                     alt="Best Selling Product" 
+                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute bottom-3 left-3 z-20">
+                                    <h4 id="bs-name" class="text-sm font-medium text-white">SaaS Landing Page Architect</h4>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="flex justify-between items-center border-t border-white/10 pt-4">
+                                <div class="text-left">
+                                    <p class="text-[10px] uppercase tracking-wider text-gray-500">Price</p>
+                                    <p class="text-xl font-medium text-white">
+                                        <span id="bs-price" class="dynamic-price" data-inr="850">₹850</span> 
+                                        <span class="text-xs text-gray-500 font-normal secondary-price"></span>
+                                    </p>
+                                </div>
+                                <button class="px-4 py-2 bg-white text-black text-xs font-semibold rounded hover:bg-gray-200 transition-colors">
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Decor elements behind -->
+                        <div class="absolute -z-10 -bottom-10 -right-10 w-40 h-40 bg-blue-600/30 rounded-full blur-[50px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Free Drop Section (With Product Image) -->
+            <div class="mt-20 w-full p-1 bg-gradient-to-r from-blue-600/50 via-purple-500/30 to-blue-600/50 rounded-2xl relative group reveal-up delay-300 shadow-2xl shadow-blue-900/20">
+                <div class="bg-black/90 backdrop-blur-xl rounded-xl p-6 md:p-8 w-full relative overflow-hidden">
+                    <!-- Dynamic Background Light -->
+                    <div class="absolute top-0 right-0 p-40 bg-blue-500/20 blur-[100px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
+                    <div class="absolute bottom-0 left-0 p-32 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none -translate-x-1/2 translate-y-1/2"></div>
+
+                    <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
+                        
+                        <!-- Product Image -->
+                        <div class="shrink-0 relative group/image w-full md:w-auto">
+                            <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-30 group-hover/image:opacity-60 transition duration-500"></div>
+                            <img id="daily-drop-image" src="" 
+                                 alt="Daily Drop Preview" 
+                                 class="relative w-full md:w-48 h-48 md:h-32 rounded-lg object-cover shadow-2xl border border-white/10 transition-all duration-500">
+                            <div id="daily-drop-badge" class="absolute top-2 left-2 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] px-2 py-0.5 rounded">
+                                <!-- Badge -->
+                            </div>
+                        </div>
+
+                        <!-- Center: Title & Info -->
+                        <div class="flex-1 flex flex-col gap-3 text-center md:text-left min-w-0">
+                             <div class="flex items-center justify-center md:justify-start gap-3">
+                                <span class="relative flex h-3 w-3">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                                </span>
+                                <span id="daily-drop-title" class="text-sm font-bold tracking-widest text-blue-400 uppercase">Daily Free Drop</span>
+                                <div class="text-sm font-mono text-gray-300 bg-white/5 px-3 py-1 rounded border border-white/10 shadow-inner">
+                                    <span id="countdown">14:22:59</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 id="daily-drop-name" class="text-2xl font-medium text-white mt-1 truncate">Minimalist Vector Logos</h3>
+                                <p id="daily-drop-desc" class="text-gray-400 mt-1 text-sm leading-relaxed">High-quality SVG pack for branding. Includes 50+ geometric shapes and abstract symbols. <span class="text-green-400 font-medium whitespace-nowrap">100% Free today.</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Action & Social Proof -->
+                        <div class="shrink-0 flex flex-col items-center md:items-end gap-4 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0 md:pl-6 w-full md:w-auto">
+                             <div class="hidden md:flex -space-x-3">
+                                <!-- Social proof avatars -->
+                                <div class="w-10 h-10 rounded-full border-2 border-black bg-gray-800 bg-[url('https://i.pravatar.cc/100?img=33')] bg-cover"></div>
+                                <div class="w-10 h-10 rounded-full border-2 border-black bg-gray-800 bg-[url('https://i.pravatar.cc/100?img=47')] bg-cover"></div>
+                                <div class="w-10 h-10 rounded-full border-2 border-black bg-gray-800 flex items-center justify-center text-[10px] text-gray-300 font-medium">+420</div>
+                             </div>
+                             <div class="text-right w-full md:w-auto">
+                                 <button onclick="this.innerText='Claimed Successfully'; this.disabled=true; this.classList.add('bg-green-600', 'text-white', 'scale-100', 'cursor-default'); this.classList.remove('bg-white', 'text-black', 'hover:scale-105');" class="w-full md:w-auto px-8 py-3 bg-white text-black text-sm font-bold rounded-lg hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)] whitespace-nowrap">
+                                    Claim Free Now
+                                 </button>
+                                 <p id="ends-in-text" class="text-[10px] text-gray-500 mt-2 text-center md:text-right">Ends in...</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    (function(){
+                        const el = document.getElementById('countdown');
+                        const endsInEl = document.getElementById('ends-in-text');
+                        if(!el) return;
+                        
+                        function updateTimer() {
+                            const now = new Date();
+                            const tomorrow = new Date(now);
+                            tomorrow.setHours(24, 0, 0, 0); // Next midnight
+                            
+                            let diff = Math.floor((tomorrow - now) / 1000); // seconds
+                            
+                            const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                            const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                            const s = (diff % 60).toString().padStart(2, '0');
+                            
+                            el.innerText = `${h}:${m}:${s}`;
+                            if(endsInEl) endsInEl.innerText = `Ends in ${h} hours, ${m} minutes`;
+                        }
+                        
+                        updateTimer();
+                        setInterval(updateTimer, 1000);
+                    })();
+                </script>
+            </div>
+        </div>
+
+
+
+        <!-- Product Sections -->
+        <div class="container mx-auto px-6 max-w-7xl mt-24">
+            
+            <div class="mb-24">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0 mb-8">
+                    <h2 class="text-2xl md:text-3xl font-medium text-white">Popular Prompts</h2>
+                    <a href="browse-prompt.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-0.5 group">
+                        Explore Prompts
+                        <span class="iconify group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right" data-width="14"></span>
+                    </a>
+                </div>
+                
+                <div id="popular-prompts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Javascript rendered content -->
+                </div>
+            </div>
+
+            <!-- Section 2: Digital Assets -->
+            <div class="mb-24">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 md:gap-0 mb-8">
+                    <h2 class="text-2xl md:text-3xl font-medium text-white">Digital Assets</h2>
+                    <a href="marketplace.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 group">
+                        Explore Marketplace
+                        <span class="iconify group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right" data-width="14"></span>
+                    </a>
+                </div>
+                
+                <div id="digital-assets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Javascript rendered content -->
+                </div>
+            </div>
+
+            <!-- Featured Collection (Preserved) -->
+            <div class="mb-24">
+                <div class="relative rounded-2xl border border-white/10 overflow-hidden bg-[#0F0F0F]">
+                    <div class="absolute top-0 right-0 p-32 bg-blue-600/10 blur-[80px] rounded-full"></div>
+                    <div class="grid md:grid-cols-2 items-center p-8 md:p-12 gap-8">
+                        <div>
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] tracking-wide uppercase mb-4">
+                                <span class="iconify" data-icon="lucide:zap" data-width="12"></span>
+                                Featured Collection
+                            </div>
+                            <h2 id="fc-title" class="text-3xl font-medium text-white mb-4">Enterprise SEO Suite</h2>
+                            <p id="fc-desc" class="text-gray-400 mb-8 max-w-md text-sm leading-relaxed">A complete bundle of 50+ prompts for keyword research, content clustering, and technical audit. Verified by top SEO agencies.</p>
+                            
+                            <div class="flex items-center gap-4">
+                                <button class="bg-white text-black px-6 py-2.5 rounded text-sm font-medium hover:bg-gray-200 transition-colors">
+                                    Buy Bundle (<span id="fc-price" class="dynamic-price" data-inr="4500">₹4,500</span>)
+                                </button>
+                                <button class="text-gray-400 text-sm hover:text-white transition-colors">View Contents</button>
+                            </div>
+                        </div>
+                        <div class="relative h-48 md:h-full w-full rounded-lg bg-grid border border-white/5 overflow-hidden flex items-center justify-center">
+                            <!-- Abstract UI visualization -->
+                            <div class="w-3/4 space-y-3 opacity-60 transform rotate-[-5deg]">
+                                <div class="h-8 w-full bg-gray-800 rounded border border-white/10 flex items-center px-3">
+                                    <div class="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                                    <div class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
+                                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                </div>
+                                <div class="h-24 w-full bg-gray-800/50 rounded border border-white/5 p-3">
+                                    <div class="h-2 w-1/3 bg-gray-700 rounded mb-2"></div>
+                                    <div class="h-2 w-1/2 bg-gray-700/50 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Proof Section -->
+            <div class="container mx-auto max-w-7xl">
+                <h3 class="text-xl font-medium text-white mb-8 text-center md:text-left">Trusted by Creators</h3>
+                <div id="reviews-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Javascript rendered content -->
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-32 border-t border-white/10 bg-black pt-16 pb-8">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <div class="col-span-2 md:col-span-1">
+                         <a href="#" class="flex items-center gap-2 mb-4">
+                            <img src="logo.png" alt="Prompster" class="h-8 w-auto object-contain rounded-[50%]">
+                        </a>
+                        <p class="text-sm text-gray-500 leading-relaxed">
+                            Empowering creators with the language of the future. <br>Based in San Francisco &amp; Bangalore.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Marketplace</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Trending</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">New Arrivals</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Bundles</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Support</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Help Center</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Prompt Guide</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Become a Seller</a></li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 class="text-white text-sm font-medium mb-4">Legal</h4>
+                        <ul class="space-y-2 text-sm text-gray-500">
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Terms</a></li>
+                            <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-600">
+                    <p>© 2024 Prompster Inc. All rights reserved.</p>
+                    <div class="flex items-center gap-4 mt-4 md:mt-0">
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:twitter" data-width="16"></span>
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:github" data-width="16"></span>
+                        <span class="iconify hover:text-white cursor-pointer transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        const EXCHANGE_RATE = 84; // 1 USD = 84 INR approx
+        
+        // --- Data Sources ---
+        // distinct classes for Tailwind scanner detection:
+        // bg-purple-500/20 text-purple-300
+        // bg-blue-500/20 text-blue-300
+        // bg-green-500/20 text-green-300
+        // bg-yellow-500/20 text-yellow-300
+        // bg-pink-500/20 text-pink-300
+
+        // Fetch and Render Dynamic Home Sections
+        document.addEventListener('PrompsterDataLoaded', () => {
+             // Combine all items for searching tags
+             const allItems = [...(window.allPrompts || []), ...(window.marketplaceItems || [])];
+
+            // 1. Best Seller (Dynamic Priority)
+            const bestSeller = allItems.find(p => p.isBestSeller);
+            // Fallback to static content ONLY if no dynamic Best Seller is set
+            const featuredProduct = bestSeller || (window.siteContent && window.siteContent.bestSeller && window.siteContent.bestSeller.productId ? null : (window.siteContent && window.siteContent.bestSeller)); 
+
+            // If we have a dynamic product, render it
+            if (bestSeller) {
+                const titleElement = document.getElementById('bs-title');
+                const container = titleElement ? titleElement.closest('.glass-panel') : null;
+                if(container) {
+                    const titleEl = document.getElementById('bs-title');
+                    if(titleEl) titleEl.textContent = bestSeller.title;
+                    
+                    const rankEl = document.getElementById('bs-rank');
+                    if(rankEl) rankEl.textContent = '#1 in ' + (bestSeller.type || 'Marketplace');
+                    
+                    const tagEl = document.getElementById('bs-tag');
+                    if(tagEl) tagEl.textContent = bestSeller.tag || 'Popular';
+                    
+                    const imgEl = document.getElementById('bs-image');
+                    if(imgEl) {
+                        imgEl.src = bestSeller.image;
+                        imgEl.parentElement.onclick = () => window.location.href = `product-details.html?id=${bestSeller._id}`;
+                        imgEl.parentElement.classList.add('cursor-pointer');
+                    }
+
+                    const nameEl = document.getElementById('bs-name');
+                    if(nameEl) nameEl.textContent = bestSeller.title;
+                    
+                    const priceEl = document.getElementById('bs-price');
+                    if(priceEl) {
+                         const price = bestSeller.price;
+                         const usd = bestSeller.priceUsd || (price / EXCHANGE_RATE).toFixed(2);
+                         priceEl.innerHTML = `₹${price.toLocaleString('en-IN')}`;
+                         // Add sibling for USD if not handled by updatePrices
+                         const parent = priceEl.parentElement;
+                         if(parent) {
+                             // clear old secondary price or update it
+                             let secondary = parent.querySelector('.secondary-price');
+                             if(!secondary) {
+                                 secondary = document.createElement('span');
+                                 secondary.className = 'text-xs text-gray-500 font-normal secondary-price ml-2';
+                                 parent.appendChild(secondary);
+                             }
+                             secondary.textContent = `($${usd})`;
+                         }
+                    }
+                    
+                    const btn = container.querySelector('button');
+                    if(btn) btn.onclick = () => window.location.href = `product-details.html?id=${bestSeller._id}`;
+                }
+            } else if (window.siteContent && window.siteContent.bestSeller) {
+                // Fallback to static content rendering for Best Seller
+                populateStaticBestSeller();
+            }
+
+            // 2. Daily Free Drop (Dynamic Priority)
+            const dailyDrop = allItems.find(p => p.isDailyDrop);
+            
+            if (dailyDrop) {
+                const ddImg = document.getElementById('daily-drop-image');
+                if(ddImg) ddImg.src = dailyDrop.image;
+                
+                const ddTitle = document.getElementById('daily-drop-title');
+                if(ddTitle) ddTitle.textContent = 'Daily Free Drop'; 
+                
+                const ddName = document.getElementById('daily-drop-name');
+                if(ddName) ddName.textContent = dailyDrop.title;
+                
+                const ddDesc = document.getElementById('daily-drop-desc');
+                if(ddDesc) ddDesc.innerHTML = `${(dailyDrop.desc || '').substring(0, 100)}... <span class="text-green-400 font-medium whitespace-nowrap">100% Free today.</span>`;
+                
+                if(ddImg && ddImg.parentElement) {
+                    const imgContainer = ddImg.parentElement;
+                    imgContainer.onclick = () => window.location.href = `product-details.html?id=${dailyDrop._id}`;
+                    imgContainer.classList.add('cursor-pointer');
+                }
+
+                 // Update Claim Button - STRICTLY navigate to product page
+                 const btn = document.querySelector('button[onclick*="Claimed Successfully"]');
+                 if(btn) {
+                     // Clone to remove old listeners
+                     const newBtn = btn.cloneNode(true);
+                     btn.parentNode.replaceChild(newBtn, btn);
+                     
+                     newBtn.textContent = 'Get it Free';
+                     newBtn.className = "w-full md:w-auto px-8 py-3 bg-white text-black text-sm font-bold rounded-lg hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)] whitespace-nowrap";
+                     newBtn.removeAttribute('onclick'); 
+                     newBtn.addEventListener('click', (e) => {
+                         e.preventDefault();
+                         e.stopPropagation();
+                         window.location.href = `product-details.html?id=${dailyDrop._id}`;
+                     });
+                 }
+            } else if (window.siteContent && window.siteContent.dailyDrop) {
+                populateStaticDailyDrop();
+            }
+
+            // 3. Populate Sections
+            // Popular Prompts: Items with type 'Prompts' (or implicit) that are popular or just top 6
+            // Or explicitly isPopular
+            let popularPrompts = (window.allPrompts || []).filter(p => p.isPopular);
+            if(popularPrompts.length === 0) popularPrompts = (window.allPrompts || []).filter(p => !p.type || p.type === 'Prompts').slice(0, 6);
+            renderPopularPrompts('popular-prompts-grid', popularPrompts);
+
+            // Digital Assets: Items with type 'Asset' or 'Other Assets'
+            let assets = allItems.filter(p => p.isDigitalAsset);
+            if(assets.length === 0) assets = allItems.filter(p => p.type === 'Asset' || p.type === 'Other Assets').slice(0, 3);
+            renderDigitalAssets('digital-assets-grid', assets);
+            
+            // Reviews
+            // Use manually added reviews from products if available, or site reviews
+            let allReviews = [];
+             // Extract reviews from products
+             allItems.forEach(p => {
+                 if(p.reviews && p.reviews.length > 0) {
+                     p.reviews.forEach(r => {
+                         allReviews.push({ ...r, image: p.image || 'https://i.pravatar.cc/150', name: r.user, role: 'Verified User' });
+                     });
+                 }
+             });
+             // Add site content reviews
+             if(window.siteContent && window.siteContent.reviews) allReviews = [...allReviews, ...window.siteContent.reviews];
+             
+             renderReviews('reviews-grid', allReviews.slice(0, 3));
+
+
+             // Featured Collection
+             const featuredCollection = allItems.find(p => p.isFeatured);
+             if (featuredCollection) {
+                 const fcTitle = document.getElementById('fc-title');
+                 if(fcTitle) fcTitle.textContent = featuredCollection.title;
+                 
+                 const fcDesc = document.getElementById('fc-desc');
+                 if(fcDesc) fcDesc.textContent = featuredCollection.desc;
+                 
+                 const fcPrice = document.getElementById('fc-price');
+                 if(fcPrice) {
+                     const usd = featuredCollection.priceUsd || (featuredCollection.price / EXCHANGE_RATE).toFixed(2);
+                     fcPrice.textContent = `₹${featuredCollection.price.toLocaleString('en-IN')} ($${usd})`;
+                 }
+                 
+                 // Bind button
+                 if(fcTitle) {
+                     const container = fcTitle.closest('.relative');
+                     const buyBtn = container.querySelector('button');
+                     if(buyBtn) buyBtn.onclick = () => window.location.href = `product-details.html?id=${featuredCollection._id}`;
+                 }
+             } else if (window.siteContent && window.siteContent.featuredCollection) {
+                 // Fallback
+                 populateStaticFeatured();
+             }
+             
+             // Hero (Always Static currently)
+             if (window.siteContent && window.siteContent.hero) {
+                const titleEl = document.getElementById('hero-title');
+                if (titleEl) titleEl.innerHTML = siteContent.hero.title;
+                const taglineEl = document.getElementById('hero-tagline');
+                if (taglineEl) taglineEl.textContent = siteContent.hero.tagline;
+                const descEl = document.getElementById('hero-desc');
+                if (descEl) descEl.textContent = siteContent.hero.description;
+                if (ctaEl) {
+                    ctaEl.querySelector('span').textContent = siteContent.hero.cta;
+                    ctaEl.onclick = () => window.location.href = 'marketplace.html';
+                }
+            }
+
+
+        });
+
+        async function renderReviews(containerId, reviews) {
+            try {
+                let items = reviews;
+                // If no reviews passed, fetch from API
+                if (!items || items.length === 0) {
+                     const res = await fetch('/api/reviews');
+                     if(res.ok) items = await res.json();
+                }
+
+                const container = document.getElementById(containerId || 'reviews-grid');
+                if(!container) return;
+                
+                if(!items || items.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">No reviews yet.</p>';
+                    return;
+                }
+                
+                // Take up to 3 reviews
+                container.innerHTML = items.slice(0, 3).map(review => {
+                    const text = review.comment || review.text || '';
+                    const name = review.reviewerName || review.user || review.name || 'User';
+                    const initial = name.charAt(0);
+                    const rating = Number(review.rating) || 5;
+                    
+                    return `
+                    <div class="glass-panel p-6 rounded-xl border border-white/5 relative bg-white/5 transform hover:translate-y-[-5px] transition-transform duration-300">
+                        <div class="absolute -top-3 -left-3 text-4xl text-blue-500 opacity-20 font-serif">"</div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-6 relative z-10 italic">"${text}"</p>
+                        <div class="flex items-center gap-3 mt-auto pt-4 border-t border-white/5">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs uppercase shadow-lg">
+                                ${initial}
+                            </div>
+                            <div>
+                                <h4 class="text-white text-sm font-medium">${name}</h4>
+                                <div class="flex text-yellow-500 text-[10px] gap-0.5 mt-0.5">
+                                    ${Array.from({length: rating}).map(() => '<span class="iconify" data-icon="lucide:star" data-width="12"></span>').join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+            } catch(e) {
+                console.error('Error rendering reviews:', e);
+            }
+        }
+        
+        // Trigger fetch if not already triggered by api.js loading time
+        if(typeof fetchPrompsterData === 'function' && (!window.allPrompts || window.allPrompts.length === 0)) {
+             fetchPrompsterData();
+        } else if (window.allPrompts && window.allPrompts.length > 0) {
+             document.dispatchEvent(new CustomEvent('PrompsterDataLoaded'));
+        }
+
+        // --- Render Functions ---
+
+        function renderPopularPrompts(containerId, items) {
+             const container = document.getElementById(containerId);
+             if (!container) return;
+             
+             if(items.length === 0) {
+                 container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No popular prompts found.</p>';
+                 return;
+             }
+
+             container.innerHTML = items.map(item => {
+                const usdVal = item.priceUsd || (item.price / EXCHANGE_RATE).toFixed(2);
+                let priceDisplay = '';
+                if(item.isFree) {
+                    priceDisplay = `<span class="font-bold text-green-400">Free</span>`;
+                } else {
+                    let discountHtml = '';
+                    if (item.discountPercentage && item.discountPercentage > 0) {
+                        const origPrice = item.price / (1 - (item.discountPercentage / 100));
+                        let origUsdVal = (Number(item.priceUsd) > 0) ? Number(item.priceUsd) / (1 - (item.discountPercentage / 100)) : origPrice / EXCHANGE_RATE;
+                        discountHtml = `<div class="flex items-center gap-1.5 mb-1"><span class="text-[10px] text-gray-500 line-through opacity-70">₹${Math.round(origPrice).toLocaleString('en-IN')} ($${origUsdVal.toFixed(2)})</span><span class="text-[9px] font-bold text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded border border-green-500/20">${item.discountPercentage}% OFF</span></div>`;
+                    }
+                    priceDisplay = `<div class="flex flex-col items-start">${discountHtml}<div class="flex items-baseline gap-1"><span class="font-bold text-white">₹${item.price.toLocaleString('en-IN')}</span> <span class="text-xs font-normal text-gray-400">($${usdVal})</span></div></div>`;
+                }
+                
+                return `
+                <article onclick="window.location.href='product-details.html?id=${item._id}'" class="bg-[#050505] border border-white/5 rounded-xl overflow-hidden hover:border-white/10 transition-colors group cursor-pointer">
+                    <div class="h-48 overflow-hidden relative">
+                         <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                          <div class="absolute bottom-3 left-3 flex gap-2 flex-wrap pr-3 w-full">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                ${item.tag || 'Prompt'}
+                            </span>
+                            ${(item.discountPercentage && item.discountPercentage > 0 && !item.isFree && !item.isDailyDrop) ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 font-bold">-${item.discountPercentage}% OFF</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-white font-medium mb-1 truncate">${item.title}</h3>
+                        <div class="flex items-center justify-between mt-3">
+                             <div class="text-sm text-gray-400">
+                                ${priceDisplay}
+                             </div>
+                             <span class="text-xs text-gray-600 group-hover:text-blue-400 transition-colors">View &rarr;</span>
+                        </div>
+                    </div>
+                </article>
+                `;
+             }).join('');
+        }
+
+        function renderDigitalAssets(containerId, items) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+             if(items.length === 0) {
+                 container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No digital assets found.</p>';
+                 return;
+             }
+
+            container.innerHTML = items.map(item => {
+                const usdVal = item.priceUsd || (item.price / EXCHANGE_RATE).toFixed(2);
+                let priceDisplay = '';
+                if(item.isFree) {
+                    priceDisplay = `<span class="font-bold text-green-400">Free</span>`;
+                } else {
+                    let discountHtml = '';
+                    if (item.discountPercentage && item.discountPercentage > 0) {
+                        const origPrice = item.price / (1 - (item.discountPercentage / 100));
+                        let origUsdVal = (Number(item.priceUsd) > 0) ? Number(item.priceUsd) / (1 - (item.discountPercentage / 100)) : origPrice / EXCHANGE_RATE;
+                        discountHtml = `<div class="flex items-center justify-end gap-1.5 mb-1"><span class="text-[10px] text-gray-500 line-through opacity-70">₹${Math.round(origPrice).toLocaleString('en-IN')} ($${origUsdVal.toFixed(2)})</span><span class="text-[9px] font-bold text-green-400 bg-green-500/10 px-1.5 py-0.5 rounded border border-green-500/20">${item.discountPercentage}% OFF</span></div>`;
+                    }
+                    priceDisplay = `<div class="flex flex-col items-end">${discountHtml}<div class="flex items-baseline gap-1"><span class="font-bold text-white">₹${item.price.toLocaleString('en-IN')}</span> <span class="text-xs font-normal text-gray-400">($${usdVal})</span></div></div>`;
+                }
+
+                return `
+                <article onclick="window.location.href='product-details.html?id=${item._id}'" class="prompt-card group relative bg-black border border-white/10 rounded-xl overflow-hidden cursor-pointer flex flex-col h-full">
+                    <div class="card-shimmer"></div>
+                    <!-- Image -->
+                    <div class="aspect-[4/3] bg-gray-900 relative overflow-hidden group-hover:opacity-90 transition-opacity">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                        <div class="w-full h-full flex items-center justify-center relative">
+                            <div class="absolute inset-0 bg-cover bg-center transition-all duration-700" style="background-image: url('${item.image}');"></div>
+                        </div>
+                        <div class="absolute top-4 left-4 flex gap-2 flex-wrap pr-4 w-full z-10">
+                            <span class="bg-indigo-600/60 backdrop-blur-md border border-white/10 text-white text-[10px] px-2 py-1 rounded tracking-wide">${item.tag || 'Asset'}</span>
+                            ${(item.discountPercentage && item.discountPercentage > 0 && !item.isFree && !item.isDailyDrop) ? `<span class="bg-blue-500/20 backdrop-blur-md border border-blue-500/30 text-blue-400 text-[10px] px-2 py-1 rounded tracking-wide font-bold">-${item.discountPercentage}% OFF</span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-5 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                             <h3 class="text-base font-medium text-white group-hover:text-blue-400 transition-colors line-clamp-1">${item.title}</h3>
+                        </div>
+                        <p class="text-sm text-gray-400 line-clamp-2 mb-4 flex-1">${item.desc || ''}</p>
+                        
+                        <div class="flex items-center justify-between border-t border-white/5 pt-4 mt-auto">
+                            <span class="text-xs text-gray-400 uppercase border border-white/10 px-1.5 py-0.5 rounded">${item.format || 'Asset'}</span>
+                            <div class="text-right">
+                                <span class="block text-sm font-semibold text-white">
+                                    ${priceDisplay}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `}).join('');
+        }
+
+        function renderReviews(containerId, items) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = items.map(item => `
+                <div class="p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-700 bg-cover" style="background-image: url('${item.image}');"></div>
+                        <div>
+                            <h4 class="text-sm font-medium text-white">${item.name || item.user}</h4>
+                            <p class="text-xs text-gray-500">${item.role || 'Verified User'}</p>
+                        </div>
+                        <div class="ml-auto flex gap-0.5 text-yellow-500">
+                            ${Array(item.rating || item.stars || 5).fill('<span class="iconify" data-icon="ri:star-fill" data-width="12"></span>').join('')}
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-400 italic">"${item.text}"</p>
+                </div>
+            `).join('');
+        }
+
+        // --- Fallback Static Renderers ---
+        function populateStaticBestSeller() {
+             if (!window.siteContent || !siteContent.bestSeller) return;
+             document.getElementById('bs-title').textContent = siteContent.bestSeller.title;
+             document.getElementById('bs-rank').textContent = siteContent.bestSeller.rank;
+             document.getElementById('bs-tag').textContent = siteContent.bestSeller.tag;
+             document.getElementById('bs-image').src = siteContent.bestSeller.image;
+             document.getElementById('bs-name').textContent = siteContent.bestSeller.productName;
+             
+             const priceEl = document.getElementById('bs-price');
+             if(priceEl) {
+                 priceEl.textContent = `₹${siteContent.bestSeller.price.toLocaleString('en-IN')}`;
+                 const parent = priceEl.parentElement;
+                 if(parent) {
+                     let secondary = parent.querySelector('.secondary-price');
+                     if(!secondary) {
+                         secondary = document.createElement('span');
+                         secondary.className = 'text-xs text-gray-500 font-normal secondary-price ml-2';
+                         parent.appendChild(secondary);
+                     }
+                     const usd = (siteContent.bestSeller.price / EXCHANGE_RATE).toFixed(2);
+                     secondary.textContent = `($${usd})`;
+                 }
+             }
+             
+             if(siteContent.bestSeller.productId) {
+                 // Bind clicks
+                 const card = document.getElementById('bs-title').closest('.glass-panel');
+                 if(card) {
+                    card.style.cursor = 'pointer';
+                    card.onclick = () => window.location.href = `product-details.html?id=${siteContent.bestSeller.productId}`;
+                    const btn = card.querySelector('button');
+                    if (btn) btn.onclick = (e) => { e.stopPropagation(); window.location.href = `product-details.html?id=${siteContent.bestSeller.productId}`; };
+                 }
+             }
+        }
+
+        function populateStaticDailyDrop() {
+            if (!window.siteContent || !siteContent.dailyDrop) return;
+            document.getElementById('daily-drop-title').textContent = siteContent.dailyDrop.title;
+            document.getElementById('daily-drop-name').textContent = siteContent.dailyDrop.name;
+            document.getElementById('daily-drop-desc').innerHTML = siteContent.dailyDrop.description;
+            document.getElementById('daily-drop-image').src = siteContent.dailyDrop.image;
+            document.getElementById('daily-drop-badge').textContent = siteContent.dailyDrop.badge; 
+            
+            if(siteContent.dailyDrop.productId) {
+                 const ddImg = document.getElementById('daily-drop-image');
+                 if(ddImg && ddImg.parentElement) {
+                    ddImg.parentElement.onclick = () => window.location.href = `product-details.html?id=${siteContent.dailyDrop.productId}`;
+                    ddImg.parentElement.classList.add('cursor-pointer');
+                 }
+                 const btn = document.querySelector('#daily-drop-section button') || document.evaluate("//button[contains(., 'Claim')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                 if(btn) {
+                     btn.onclick = () => window.location.href = `product-details.html?id=${siteContent.dailyDrop.productId}`;
+                 }
+            }
+        }
+
+        function populateStaticFeatured() {
+             if (!window.siteContent || !siteContent.featuredCollection) return;
+             document.getElementById('fc-title').textContent = siteContent.featuredCollection.title;
+             document.getElementById('fc-desc').textContent = siteContent.featuredCollection.description;
+             const priceIN = siteContent.featuredCollection.price;
+             const priceUSD = (priceIN / EXCHANGE_RATE).toFixed(2);
+             document.getElementById('fc-price').textContent = `₹${priceIN.toLocaleString()} ($${priceUSD})`;
+             
+             if(siteContent.featuredCollection.productId) {
+                 const container = document.getElementById('fc-title').closest('.relative');
+                 const buyBtn = container.querySelector('button');
+                 if(buyBtn) buyBtn.onclick = () => window.location.href = `product-details.html?id=${siteContent.featuredCollection.productId}`;
+             }
+        }
+    </script>
+    <script src="js/auth-modal.js"></script>
+</body></html>

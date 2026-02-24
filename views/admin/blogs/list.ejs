@@ -1,0 +1,79 @@
+<div class="bg-gray-50 dark:bg-[#111111] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden shadow-xl">
+    <div class="p-6 border-b border-gray-200 dark:border-white/10 flex justify-between items-center bg-gray-50 dark:bg-[#111111]">
+        <div>
+            <h3 class="text-xl font-semibold text-black dark:text-white">Blogs</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your articles and posts</p>
+        </div>
+        <a href="/admin/blogs/new" class="flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-sm font-medium rounded-lg transition-colors shadow-lg shadow-blue-900/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Write New Blog
+        </a>
+    </div>
+
+    <% if (blogs.length > 0) { %>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <thead class="bg-gray-200 dark:bg-gray-800/50 text-gray-800 dark:text-gray-200 uppercase text-xs font-semibold tracking-wider">
+                <tr>
+                    <th class="px-6 py-4">Title</th>
+                    <th class="px-6 py-4">Category</th>
+                    <th class="px-6 py-4">Author</th>
+                    <th class="px-6 py-4">Date</th>
+                    <th class="px-6 py-4">Order</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700">
+                <% blogs.forEach(blog => { %>
+                <tr class="hover:bg-gray-200 dark:hover:bg-gray-800/80 transition-colors group">
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-black group-hover:text-black dark:text-white dark:group-hover:text-white text-base truncate max-w-[300px]"><%= blog.title %></div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-block px-3 py-1.5 rounded text-xs font-semibold bg-gray-100 text-black dark:bg-[#222222] dark:text-white border border-gray-300 dark:border-gray-700 tracking-wide">
+                            <%= blog.category || 'General' %>
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-blue-900/50 flex items-center justify-center text-xs text-black dark:text-white border border-black dark:border-white/20 font-medium">
+                                <%= blog.author ? blog.author.charAt(0) : 'A' %>
+                            </div>
+                            <span class="text-gray-700 group-hover:text-black dark:text-gray-300 dark:group-hover:text-white"><%= blog.author || 'Admin' %></span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4"><%= new Date(blog.createdAt).toLocaleDateString() %></td>
+                    <td class="px-6 py-4 text-gray-500 dark:text-gray-400"><%= blog.displayOrder || 0 %></td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-end gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <a href="/admin/blogs/<%= blog._id %>/edit" class="p-2 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </a>
+                            <form action="/admin/blogs/<%= blog._id %>/duplicate" method="POST" style="margin:0;">
+                                <button type="submit" class="p-2 text-green-400 hover:bg-green-500/10 rounded-lg transition-colors" title="Duplicate">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                </button>
+                            </form>
+                            <form action="/admin/blogs/<%= blog._id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');" style="margin:0;">
+                                <button type="submit" class="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <% } else { %>
+    <div class="p-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800/50 mb-4 text-gray-500">
+             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        </div>
+        <h3 class="text-black dark:text-white font-medium text-lg mb-1">No blogs found</h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Start knowing your audience by creating content.</p>
+        <a href="/admin/blogs/new" class="px-6 py-2 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-sm font-medium rounded-lg transition-colors">Write Blog</a>
+    </div>
+    <% } %>
+</div>

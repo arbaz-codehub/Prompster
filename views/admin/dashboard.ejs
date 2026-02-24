@@ -1,0 +1,40 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-gray-50 dark:bg-[#111111] p-6 rounded-xl border border-gray-200 dark:border-white/10">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide mb-2">Total Products</h3>
+        <p class="text-3xl font-bold text-black dark:text-white"><%= stats.productsCount %></p>
+    </div>
+    <div class="bg-gray-50 dark:bg-[#111111] p-6 rounded-xl border border-gray-200 dark:border-white/10">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide mb-2">Total Blogs</h3>
+        <p class="text-3xl font-bold text-black dark:text-white"><%= stats.blogsCount %></p>
+    </div>
+    <div class="bg-gray-50 dark:bg-[#111111] p-6 rounded-xl border border-gray-200 dark:border-white/10">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide mb-2">System Status</h3>
+        <p class="text-3xl font-bold text-green-400">Online</p>
+    </div>
+</div>
+
+<div class="mt-8 bg-gray-50 dark:bg-[#111111] rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
+    <div class="p-6 border-b border-gray-200 dark:border-white/10">
+        <h3 class="text-lg font-medium text-black dark:text-white">Recent Products</h3>
+    </div>
+    <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 uppercase font-medium">
+            <tr>
+                <th class="px-6 py-3">Title</th>
+                <th class="px-6 py-3">Type</th>
+                <th class="px-6 py-3">Price</th>
+                <th class="px-6 py-3">Date</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-700">
+            <% recentProducts.forEach(product => { %>
+            <tr class="hover:bg-gray-200/50 hover:shadow-sm cursor-pointer dark:hover:bg-gray-800/80 transition-colors group">
+                <td class="px-6 py-4 font-medium text-black group-hover:text-black dark:text-white dark:group-hover:text-white"><%= product.title %></td>
+                <td class="px-6 py-4"><%= product.type %></td>
+                <td class="px-6 py-4 font-medium text-black group-hover:text-black dark:text-white dark:group-hover:text-white">₹<%= product.price %></td>
+                <td class="px-6 py-4 text-gray-700 group-hover:text-black dark:text-gray-300 dark:group-hover:text-white"><%= product.createdAt.toLocaleDateString() %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

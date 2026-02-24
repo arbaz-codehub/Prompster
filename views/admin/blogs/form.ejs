@@ -1,0 +1,82 @@
+<div class="max-w-4xl mx-auto bg-gray-50 dark:bg-[#111111] rounded-xl border border-gray-200 dark:border-white/10 p-8">
+    <div class="mb-8">
+        <a href="/admin/blogs" class="text-gray-500 dark:text-gray-400 hover:text-black dark:text-white text-sm mb-4 inline-block">&larr; Back to Blogs</a>
+        <h2 class="text-2xl font-bold text-black dark:text-white"><%= blog._id ? 'Edit Blog' : 'New Blog' %></h2>
+    </div>
+
+    <form action="<%= action %>" method="POST" class="space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Title</label>
+                <input type="text" name="title" value="<%= blog.title || '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 " required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Category</label>
+                <input type="text" name="category" value="<%= blog.category || '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 ">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Author</label>
+                <input type="text" name="author" value="<%= blog.author || '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 ">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Date Display</label>
+                <input type="text" name="date" value="<%= blog.date || new Date().toLocaleDateString() %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 ">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Image URL</label>
+                <input type="url" name="image" value="<%= blog.image || '' %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 " placeholder="https://..." required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Display Order</label>
+                <input type="number" name="displayOrder" value="<%= blog.displayOrder || 0 %>" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 ">
+                <p class="text-xs text-gray-500 mt-1">Higher numbers appear first. Default is 0.</p>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Summary</label>
+            <textarea name="summary" rows="3" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white focus:border-black dark:border-white focus:ring-1 "><%= blog.summary || '' %></textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Content (HTML)</label>
+            <textarea name="fullContent" rows="10" class="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded p-2.5 text-black dark:text-white font-mono text-sm focus:border-black dark:border-white focus:ring-1 "><%= blog.fullContent || '' %></textarea>
+        </div>
+
+        <div class="pt-6 border-t border-gray-200 dark:border-white/10 flex justify-end">
+            <button type="submit" class="px-6 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 font-medium rounded transition">Save Blog</button>
+        </div>
+
+    </form>
+</div>
+
+<!-- TinyMCE Integration -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="no-referrer"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        tinymce.init({
+            selector: 'textarea[name="fullContent"]',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'highlightblock | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            skin: 'oxide-dark',
+            content_css: 'dark',
+            height: 500,
+            setup: function (editor) {
+                editor.ui.registry.addButton('highlightblock', {
+                    icon: 'highlight-bg-color',
+                    tooltip: 'Insert Highlight Block',
+                    onAction: function () {
+                        editor.insertContent('<div class="highlight-block"><p style="margin:0;"><strong>Highlight:</strong> Enter your highlighted text here...</p></div><br>');
+                    }
+                });
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
+    });
+</script>
