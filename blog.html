@@ -436,10 +436,18 @@
         });
 
         // Initialize
-        document.addEventListener('PrompsterDataLoaded', () => {
+        function initBlog() {
             renderFeaturedPost();
             renderBlog();
-        });
+        }
+
+        document.addEventListener('PrompsterDataLoaded', initBlog);
+        document.addEventListener('PrompsterDataUpdated', initBlog);
+
+        // Re-entrant check
+        if (window.blogData && window.blogData.length > 0) {
+            initBlog();
+        }
     </script>
     <script src="js/auth-modal.js"></script>
 </body>

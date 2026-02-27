@@ -323,7 +323,7 @@
         });
 
         // Content Population
-        document.addEventListener('PrompsterDataLoaded', () => {
+        function initAbout() {
             // About Hero
             if(siteContent.aboutHero) {
                 document.getElementById('hero-tagline').textContent = siteContent.aboutHero.tagline;
@@ -375,7 +375,15 @@
                     </div>
                 `).join('');
             }
-        });
+        }
+
+        document.addEventListener('PrompsterDataLoaded', initAbout);
+        document.addEventListener('PrompsterDataUpdated', initAbout);
+
+        // Re-entrant check
+        if (window.siteContent && Object.keys(window.siteContent).length > 0) {
+            initAbout();
+        }
     </script>
     <script src="js/auth-modal.js"></script>
 </body>

@@ -740,18 +740,19 @@
             });
         }
 
-        document.addEventListener('PrompsterDataLoaded', () => {
+        function initMarketplace() {
              renderCategoryTabs();
              renderFormatFilters();
              setupFilters('price', 'price');
              renderItems();
-        });
+        }
+
+        document.addEventListener('PrompsterDataLoaded', initMarketplace);
+        document.addEventListener('PrompsterDataUpdated', renderItems);
         
         // Re-entrant check
         if(window.categories && window.formats) {
-             renderCategoryTabs();
-             renderFormatFilters();
-             renderItems();
+             initMarketplace();
         }
     </script>
 

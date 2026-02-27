@@ -1012,10 +1012,18 @@
         }
 
         // Initialize
-        document.addEventListener('PrompsterDataLoaded', () => {
+        function initBrowser() {
              renderPromptTypesFilter();
              updateUI();
-        });
+        }
+
+        document.addEventListener('PrompsterDataLoaded', initBrowser);
+        document.addEventListener('PrompsterDataUpdated', updateUI);
+
+        // Re-entrant check if data loaded from cache before listener was attached
+        if (window.allPrompts && window.allPrompts.length > 0) {
+            initBrowser();
+        }
 
     </script>
     <script src="js/auth-modal.js"></script>
