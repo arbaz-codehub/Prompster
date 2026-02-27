@@ -42,11 +42,17 @@
         });
     </script>
 
-    <div class="flex h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-50 dark:bg-[#111111] border-r border-gray-200 dark:border-white/10 flex flex-col">
-            <div class="h-16 flex items-center justify-center border-b border-gray-200 dark:border-white/10">
-                <h1 class="text-xl font-bold text-black dark:text-white">Prompster Admin</h1>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-50 dark:bg-[#111111] border-r border-gray-200 dark:border-white/10 flex flex-col transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0">
+            <div class="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-white/10">
+                <h1 class="text-xl font-bold text-black dark:text-white mx-auto md:mx-0">Prompster Admin</h1>
+                <button id="sidebar-close" class="md:hidden p-1 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors focus:outline-none flex items-center justify-center">
+                    <span class="iconify" data-icon="lucide:x" data-width="24"></span>
+                </button>
             </div>
             <nav class="flex-1 p-4 space-y-2">
                 <% if (typeof adminRole !== 'undefined' && adminRole === 'admin') { %>
@@ -67,10 +73,15 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-auto bg-white dark:bg-[#0a0a0a]">
-            <header class="h-16 bg-gray-50 dark:bg-[#111111] border-b border-gray-200 dark:border-white/10 flex items-center justify-between px-8">
-                <h2 class="text-lg font-medium text-black dark:text-white"><%= pageTitle || 'Dashboard' %></h2>
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-4 border-l border-gray-200 dark:border-white/10 pl-6">
+            <header class="h-16 bg-gray-50 dark:bg-[#111111] border-b border-gray-200 dark:border-white/10 flex items-center justify-between px-4 md:px-8">
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="md:hidden p-2 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors focus:outline-none flex items-center justify-center">
+                        <span class="iconify" data-icon="lucide:menu" data-width="24"></span>
+                    </button>
+                    <h2 class="text-lg font-medium text-black dark:text-white truncate"><%= pageTitle || 'Dashboard' %></h2>
+                </div>
+                <div class="flex items-center gap-4 md:gap-6">
+                    <div class="flex items-center gap-2 md:gap-4 border-l border-gray-200 dark:border-white/10 pl-4 md:pl-6">
                         <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 transition-colors focus:outline-none flex items-center justify-center border border-transparent mr-2">
                             <span id="theme-toggle-light-icon" class="iconify hidden" data-icon="lucide:sun" data-width="20"></span>
                             <span id="theme-toggle-dark-icon" class="iconify hidden" data-icon="lucide:moon" data-width="20"></span>
@@ -81,7 +92,7 @@
                 </div>
             </header>
             
-            <div class="p-8">
+            <div class="p-4 md:p-8">
                 <%- body %>
             </div>
         </main>
@@ -125,6 +136,22 @@
                     }
                 });
             }
+
+            // Sidebar Mobile Toggle
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const closeBtn = document.getElementById('sidebar-close');
+
+            function toggleSidebar() {
+                if (sidebar) sidebar.classList.toggle('-translate-x-full');
+                if (overlay) overlay.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            }
+
+            if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+            if(overlay) overlay.addEventListener('click', toggleSidebar);
         });
 
         // Simple Toast Logic
