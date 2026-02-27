@@ -25,7 +25,13 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Static Files (Serve files from current directory for now to keep existing structure working)
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, '/'), {
+  maxAge: '1d', // Cache static assets in the browser for 1 day
+  setHeaders: (res, path) => {
+    // Ensuring caching for static assets
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+  }
+}));
 
 // Routes
 app.use('/api', require('./routes/api'));

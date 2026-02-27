@@ -4,6 +4,15 @@ const Product = require('../models/Product');
 const Blog = require('../models/Blog');
 const SiteContent = require('../models/SiteContent');
 
+// Middleware to apply Cache-Control headers to all GET routes in the API
+router.use((req, res, next) => {
+  if (req.method === 'GET') {
+    // Cache for 60 seconds, serve stale content for up to 5 minutes while revalidating in the background
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  }
+  next();
+});
+
 // GET /api/products
 router.get('/products', async (req, res) => {
   try {
